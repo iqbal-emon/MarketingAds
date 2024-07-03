@@ -1,0 +1,25 @@
+﻿@using MarketingAds.Services;
+@using MarketingAds.Data;
+@using MarketingAds.Models
+@inject IJSRuntime JSRuntime
+@inject GetData GetData;
+@page "/page"
+<div>
+    @if (categories != null)
+    {
+        
+    @foreach(var category in categories)
+    {
+        <h1>@category?.CategoryName</h1>
+    }
+    }
+</div>
+
+@code {
+    public IEnumerable<Category> categories;
+    protected override async Task OnInitializedAsync()
+    {
+     categories=await GetData.GetUsers();
+    }
+
+}
