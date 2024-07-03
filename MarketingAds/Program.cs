@@ -14,10 +14,7 @@ builder.Services.AddServerSideBlazor();
 // Register HttpClient and GetDataService
 builder.Services.AddSingleton(new Uri("https://localhost:7235"));
 
-builder.Services.AddHttpClient<GetData>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7209/");
-});
+builder.Services.AddHttpClient<GetData>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 { }).AddEntityFrameworkStores<Marketing>();
 builder.Services.AddTransient<Marketing>();
