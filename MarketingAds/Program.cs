@@ -1,25 +1,38 @@
 using Google.Api.Ads.Common.Lib;
+using MarketingAds.Auth;
+using MarketingAds.Components;
 using MarketingAds.Data;
-using MarketingAds.Services;
+
+using MarketingAdsLibrary.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-// Register HttpClient and GetDataService
-builder.Services.AddSingleton(new Uri("https://localhost:7235"));
 
-builder.Services.AddHttpClient<GetData>();
+
+builder.Services.AddScoped<StatusService>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 { }).AddEntityFrameworkStores<Marketing>();
 builder.Services.AddTransient<Marketing>();
+builder.Services.AddTransient<AuthService>();
+builder.Services.AddScoped<AuthStateProvider>();
+builder.Services.AddScoped<StatusService>();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<ProtectedLocalStorage>();
+builder.Services.AddTransient<DeleteComponent>();
 
-
+builder.Services.AddAuthorizationCore();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

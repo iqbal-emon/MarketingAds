@@ -1,0 +1,42 @@
+﻿@using MarketingAds.Models;
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Add Status</h5>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="HideModal"></button>
+        </div>
+        <div class="modal-body">
+            <RadzenTemplateForm Data="@status" TItem="Status" Submit="@SaveStatus">
+                <div class="rz-p-0 rz-p-md-12">
+                    <RadzenRow Gap="1rem">
+                        <RadzenColumn Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Status Name:" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="status.Name" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+
+                                <RadzenFormField Text="Status ShortForm" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="status.ShorForm" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+
+                                <RadzenButton Text="Submit" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </div>
+            </RadzenTemplateForm>
+
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public Status status { get; set; }
+    [Parameter]
+    public EventCallback HideModal { get; set; }
+    [Parameter]
+    public EventCallback SaveStatus { get; set; }
+    [Parameter]
+    public List<Status> allStatus { get; set; }
+
+}

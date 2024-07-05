@@ -29,6 +29,8 @@ namespace MarketingAds.Data
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Status> Status { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,0 +1,178 @@
+﻿@page "/Status"
+@using MarketingAds.Models;
+@using MarketingAdsLibrary.Services;
+@using MarketingAds.Components;
+@inject StatusService statusService;
+@inject DeleteComponent deleteComponent;
+
+
+@if(load==true){
+
+
+<div class=" mt-5">
+    <div class="d-flex justify-content-between">
+        <h3>Status Details</h3>
+        @* <button class="btn btn-primary" @onclick="showModel">Add House</button> *@
+            <RadzenButton Text="Add Status"  Click="showModel" />
+        </div>
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="12" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@statuss" ColumnWidth="200px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
+            <Columns>
+                <RadzenDataGridColumn Property="Id" Filterable="false" Title="ID" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Name" Title="Name" Width="160px" />
+                <RadzenDataGridColumn Property="ShorForm" Title="ShorForm" Width="200px" />
+                <RadzenDataGridColumn Title="Action" Width="200px" Filterable="false">
+                    <Template Context="status">
+                        <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteStatus(status.Id.HasValue ? status.Id.Value : 0))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                        <RadzenButton Text="Edit" Icon="edit" Style="margin-right: 10px;" Click="@(args => UpdateStatus(status.Id.HasValue ? status.Id.Value : 0))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
+
+
+                    </Template>
+                </RadzenDataGridColumn>
+              
+            </Columns>
+        </RadzenDataGrid>
+</div>
+<div class="modal px-5" tabindex="-1" style="@ModalStyle">
+        <StatusAddComponent  status=" status" allStatus="statuss" HideModal="HideModal" SaveStatus="SaveStatus" />
+
+</div>
+
+
+    @if (UpdateStatus != null)
+    {
+        <div class="modal px-5" tabindex="-1" style="@EditModalStyle">
+                <StatusUpdateComponent updateStatus="statusUpdate" UpdateStatusBtn="UpdateStatusBtn" hideUpdate="hideUpdate" />
+        </div>
+        }
+    <div   style="@DeleteModalStyle">
+       
+         @{
+            deleteComponent.ShowConfirmationDialog();
+        }
+        
+    </div>
+
+}
+else
+{
+    <h1>Loading..</h1>
+}
+
+@code {
+    public List<Status> statuss;
+    bool showModal = false;
+    bool DeleteModel = false;
+    bool EditModal = false;
+    private int roleToDelete;
+    private List<Status> statusOptions = new List<Status>();
+    public bool load = false;  
+    IList<Status> selectedStatus;
+    protected override async Task OnInitializedAsync()
+    {
+        statuss = await statusService.GetStatus();
+        load = true;
+        selectedStatus = new List<Status>() { statuss.FirstOrDefault() };
+       
+    }
+  
+
+
+    public Status status = new Status();
+    public Status? statusUpdate = new Status();
+    public async void SaveStatus()
+    {
+
+        showModal = false;
+        await statusService.AddStatus(status);
+
+        status = new Status();
+        statuss = await statusService.GetStatus();
+        StateHasChanged();
+
+
+    }
+
+    void HideModal()
+    {
+        showModal = false;
+        status = new Status();
+
+    }
+    void hideDelete()
+    {
+        DeleteModel = false;
+    }
+
+    void hideUpdate()
+    {
+        EditModal = false;
+
+    }
+    async Task showModel()
+    {
+
+
+        showModal = true;
+    }
+
+    async Task UpdateStatus(int StatusId)
+    {
+        // Call the service method with the parsed memberId
+        var roleMember = await statusService.GetStatusById(StatusId);
+
+        EditModal = true;
+        if (roleMember != null)
+        {
+            statusUpdate = new Status()
+                {
+                    Id = roleMember.Id,
+                    Name = roleMember.Name,
+                    ShorForm = roleMember.ShorForm,
+
+                };
+
+        }
+        else
+        {
+
+        }
+    }
+
+
+
+
+
+    protected async Task DeleteStatus(int roleId)
+    {
+        roleToDelete = roleId;
+        DeleteModel = true;
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        await statusService.deleteAsync(roleToDelete);
+        Console.WriteLine(roleToDelete);
+        statuss = await statusService.GetStatus();
+
+
+        // Reset variables
+        roleToDelete = 0;
+        DeleteModel = false;
+    }
+
+    private async Task UpdateStatusBtn()
+    {
+        EditModal = false;
+        await statusService.updatedateStatus(statusUpdate);
+
+        statuss = await statusService.GetStatus();
+
+    }
+    string ModalStyle => showModal ? "display: block;" : "display: none;";
+    string DeleteModalStyle => DeleteModel ? "display: block;" : "display: none;";
+    string EditModalStyle => EditModal ? "display: block;" : "display: none;";
+
+
+
+}

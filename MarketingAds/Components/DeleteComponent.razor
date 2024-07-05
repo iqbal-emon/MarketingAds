@@ -1,0 +1,37 @@
+﻿@inject DialogService DialogService
+
+@if (IsVisible)
+{
+    <div class="rz-p-12 rz-text-align-center">
+        <RadzenButton Text="Confirm dialog" ButtonStyle="ButtonStyle.Secondary"
+                      Click=@(args => ShowConfirmationDialog()) />
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+    [Parameter]
+    public EventCallback hideDelete { get; set; }
+
+    [Parameter]
+    public EventCallback DeleteConfirmed { get; set; }
+
+    public async Task ShowConfirmationDialog()
+    {
+        bool? result = await DialogService.Confirm("Are you sure?", "MyTitle", new ConfirmOptions()
+            {
+                OkButtonText = "DeleteConfirmed",
+                CancelButtonText = "Cancel"
+            });
+
+        if (result==true)
+        {
+            await DeleteConfirmed.InvokeAsync();
+        }
+        else
+        {
+            await hideDelete.InvokeAsync();
+        }
+    }
+}

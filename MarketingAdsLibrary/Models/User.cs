@@ -18,10 +18,11 @@ namespace MarketingAds.Models
         public DateTime?  RegistrationDate { get; set; }
         public string? UserRole { get; set; }
 
-        public ICollection<Listing> Listings { get; set; }
-        public ICollection<Message> MessagesSent { get; set; }
-        public ICollection<Message> MessagesReceived { get; set; }
-        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Listing>? Listings { get; set; }
+        public ICollection<Message>? MessagesSent { get; set; }
+        public ICollection<Message>? MessagesReceived { get; set; }
+        public ICollection<Transaction>? Transactions { get; set; }
+
         public int StatusId { get; set; } = 1;
         [ForeignKey("StatusId")]
         public virtual Status? Status { get; set; }

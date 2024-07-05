@@ -31,7 +31,6 @@ namespace MarketingAdsLibrary.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryID"), 1L, 1);
 
                     b.Property<string>("CategoryName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StatusId")
@@ -72,28 +71,25 @@ namespace MarketingAdsLibrary.Migrations
 
             modelBuilder.Entity("MarketingAds.Models.Listing", b =>
                 {
-                    b.Property<int>("ListingID")
+                    b.Property<int?>("ListingID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ListingID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("ListingID"), 1L, 1);
 
-                    b.Property<int>("CategoryID")
+                    b.Property<int?>("CategoryID")
                         .HasColumnType("int");
 
                     b.Property<int?>("CategoryID1")
                         .HasColumnType("int");
 
                     b.Property<string>("Condition")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("PostedDate")
@@ -102,14 +98,13 @@ namespace MarketingAdsLibrary.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("StatusId")
+                    b.Property<int?>("StatusId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserID")
+                    b.Property<int?>("UserID")
                         .HasColumnType("int");
 
                     b.Property<int?>("UserID1")
@@ -132,11 +127,11 @@ namespace MarketingAdsLibrary.Migrations
 
             modelBuilder.Entity("MarketingAds.Models.Message", b =>
                 {
-                    b.Property<int>("MessageID")
+                    b.Property<int?>("MessageID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("MessageID"), 1L, 1);
 
                     b.Property<int?>("ListingID")
                         .HasColumnType("int");
@@ -153,7 +148,7 @@ namespace MarketingAdsLibrary.Migrations
                     b.Property<DateTime?>("SentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("StatusId")
+                    b.Property<int?>("StatusId")
                         .HasColumnType("int");
 
                     b.HasKey("MessageID");
@@ -171,11 +166,11 @@ namespace MarketingAdsLibrary.Migrations
 
             modelBuilder.Entity("MarketingAds.Models.Review", b =>
                 {
-                    b.Property<int>("ReviewID")
+                    b.Property<int?>("ReviewID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("ReviewID"), 1L, 1);
 
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
@@ -192,7 +187,7 @@ namespace MarketingAdsLibrary.Migrations
                     b.Property<int?>("ReviewerID")
                         .HasColumnType("int");
 
-                    b.Property<int>("StatusId")
+                    b.Property<int?>("StatusId")
                         .HasColumnType("int");
 
                     b.HasKey("ReviewID");
@@ -208,11 +203,11 @@ namespace MarketingAdsLibrary.Migrations
 
             modelBuilder.Entity("MarketingAds.Models.Status", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -344,8 +339,7 @@ namespace MarketingAdsLibrary.Migrations
                     b.HasOne("MarketingAds.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MarketingAds.Models.Category", null)
                         .WithMany("Listings")
@@ -353,15 +347,12 @@ namespace MarketingAdsLibrary.Migrations
 
                     b.HasOne("MarketingAds.Models.Status", "Status")
                         .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StatusId");
 
                     b.HasOne("MarketingAds.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MarketingAds.Models.User", null)
                         .WithMany("Listings")
@@ -392,9 +383,7 @@ namespace MarketingAdsLibrary.Migrations
 
                     b.HasOne("MarketingAds.Models.Status", "Status")
                         .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StatusId");
 
                     b.Navigation("Listing");
 
@@ -417,9 +406,7 @@ namespace MarketingAdsLibrary.Migrations
 
                     b.HasOne("MarketingAds.Models.Status", "Status")
                         .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StatusId");
 
                     b.Navigation("Listing");
 
@@ -483,8 +470,7 @@ namespace MarketingAdsLibrary.Migrations
 
                     b.Navigation("Reviews");
 
-                    b.Navigation("Transaction")
-                        .IsRequired();
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("MarketingAds.Models.User", b =>

@@ -1,0 +1,115 @@
+﻿@using MarketingAdsLibrary.Services;
+@using MarketingAds.Data;
+@using MarketingAds.Models
+@using System.Security.Cryptography;
+@using System.Text;
+@inject IJSRuntime JSRuntime
+@inject AuthService authService;
+@page "/CreateAccount"
+
+<div class="container col-8 mt-5">
+    <div class="d-flex justify-content-center" style="border-radius: 20px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+        <div class="col-6">
+            <img src="./Image/Login.jpg" class="img-fluid" alt="Login Image">
+        </div>
+        <div class="col-6" style="margin-top:1%;">
+            <div class="mt-6">
+                <h1 class="text-center mb-4">Sign Up</h1>
+                <div style="margin-left:30%">
+    <RadzenTemplateForm TItem="User" Data=@user Submit=@HandleValidSubmit>
+        <RadzenRow Gap="1rem">
+            <RadzenColumn Size="8" >
+                <RadzenStack>
+                    <RadzenFormField Text="Username" Variant="@variant">
+                        <ChildContent>
+                            <RadzenTextBox Name="Username" @bind-Value="user.Username"  />
+                        </ChildContent>
+                        <Helper>
+                            <RadzenRequiredValidator Component="Username" Text="Username is required." />
+                        </Helper>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Password" Variant="@variant">
+                        <ChildContent>
+                            <RadzenPassword Name="Password" @bind-Value="user.PasswordHash" />
+                        </ChildContent>
+                        <Helper>
+                            <RadzenRequiredValidator Component="Password" Text="Password is required." />
+                        </Helper>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Email" Variant="@variant">
+                        <ChildContent>
+                            <RadzenTextBox Name="Email" @bind-Value="user.Email" />
+                        </ChildContent>
+                        <Helper>
+                            <RadzenRequiredValidator Component="Email" Text="Email is required." />
+                        </Helper>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Phone" Variant="@variant">
+                        <ChildContent>
+                            <RadzenTextBox Name="Phone" @bind-Value="user.Phone" />
+                        </ChildContent>
+                        <Helper>
+                            <RadzenRequiredValidator Component="Phone" Text="Phone is required." />
+                        </Helper>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Full Name" Variant="@variant">
+                        <ChildContent>
+                            <RadzenTextBox Name="FullName" @bind-Value="user.FullName" />
+                        </ChildContent>
+                        <Helper>
+                            <RadzenRequiredValidator Component="FullName" Text="FullName is required." />
+                        </Helper>
+                    </RadzenFormField>
+
+                    <RadzenFormField Text="Address" Variant="@variant">
+                        <ChildContent>
+                            <RadzenTextBox Name="Address"  @bind-Value="user.Address" />
+                        </ChildContent>
+                        <Helper>
+                            <RadzenRequiredValidator Component="Address" Text="Address is required." />
+                        </Helper>
+
+                    </RadzenFormField>
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Submit"></RadzenButton>
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenTemplateForm>
+    </div>
+            </div>
+        </div>
+    </div>
+</div>
+      
+
+@code {
+    Variant variant = Variant.Outlined;
+
+
+    private User user = new User();
+
+
+
+    private void HandleValidSubmit()
+    {
+        
+            var password = HashPassword();
+            user.PasswordHash = password;
+            user.RegistrationDate = DateTime.Now;
+            var createAccount = authService.CreateAccount(user);
+
+            user = new User(); // Reset the form after submission
+    
+    }
+
+    private string HashPassword()
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(user.PasswordHash));
+
+            // Convert hashed bytes to base64 string for storage
+          return  user.PasswordHash = Convert.ToBase64String(hashedBytes);
+        }
+    }
+}

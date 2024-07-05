@@ -1,0 +1,44 @@
+﻿@using MarketingAds.Models;
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Update Status</h5>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="hideUpdate"></button>
+        </div>
+        <div class="modal-body">
+            <RadzenTemplateForm Data="@updateStatus" TItem="Status" Submit="@UpdateStatusBtn">
+                <div class="rz-p-0 rz-p-md-12">
+
+
+                    <RadzenRow Gap="1rem">
+                        <RadzenColumn Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="House Name:" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="updateStatus.Name" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+
+                                <RadzenFormField Text="House Address:" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="updateStatus.ShorForm" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+
+                           
+                                <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </div>
+            </RadzenTemplateForm>
+        </div>
+
+
+    </div>
+</div>
+@code {
+    [Parameter]
+    public Status updateStatus { get; set; }
+    [Parameter]
+    public EventCallback UpdateStatusBtn { get; set; }
+    [Parameter]
+    public EventCallback hideUpdate { get; set; }
+
+}

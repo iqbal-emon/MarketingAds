@@ -1,0 +1,105 @@
+﻿@using MarketingAdsLibrary.Services;
+@using MarketingAds.Data;
+@using MarketingAds.Models;
+@using MarketingAds.Auth;
+@using System.Security.Cryptography;
+@using System.Text;
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject  AuthService authService;
+@inject AuthStateProvider AuthStateProvider
+@page "/Login"
+<div class="container col-8 mt-5">
+    <div class="d-flex justify-content-center" style="border-radius: 20px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+        <div class="col-6">
+            <img src="./Image/Login.jpg" class="img-fluid" alt="Login Image">
+        </div>
+        <div class="col-6" style="margin-top:5%;">
+            <div class="mt-6">
+                <h1 class="text-center mb-4">Log In</h1>
+                <div style="margin-left:30%">
+                <RadzenTemplateForm TItem="User" Data=@user Submit=@HandleLogIn>
+                    <RadzenRow Gap="2rem">
+                        <RadzenColumn Size="8">
+                            <RadzenStack>
+                                <RadzenFormField Text="Username" Variant="@variant">
+                                    <ChildContent>
+                                        <RadzenTextBox Name="Username" @bind-Value="user.Username" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="Username" Text="Username is required." />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Password" Variant="@variant">
+                                    <ChildContent>
+                                        <RadzenPassword Name="Password" @bind-Value="user.PasswordHash" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="Password" Text="Password is required." />
+                                    </Helper>
+                                </RadzenFormField>
+                                <div class="text-center">
+                                    <RadzenButton ButtonType="ButtonType.Submit" Text="Submit"></RadzenButton>
+                                </div>
+
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenTemplateForm>
+                                
+                 
+                </div>
+
+            </div>
+            <div class="text-center " style="margin-left:30px;margin-top:5px;">
+                <a href="/CreateAccount">Sign Up</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@code {
+    Variant variant = Variant.Outlined;
+    private User user = new User();
+    private async Task HandleLogIn()
+    {
+
+        var password = HashPassword();
+        user.PasswordHash = password;
+        var NewUser =await authService.LogIn(user);
+        if (NewUser!=null)
+        {
+         
+            await AuthStateProvider.UpdateAuthenticationState(new UserSession
+            {
+                    Email = NewUser.Email,
+                    UserRole = NewUser.UserRole
+                
+            });
+            NavigationManager.NavigateTo("/UserDetails",true);
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Wrong Credential");
+
+        }
+
+        user = new User();
+
+
+    }
+
+    private string HashPassword()
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(user.PasswordHash));
+            return user.PasswordHash = Convert.ToBase64String(hashedBytes);
+        }
+    }
+}

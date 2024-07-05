@@ -4,7 +4,7 @@ namespace MarketingAds.Models
 {
     public class Message
     {
-        public int MessageID { get; set; }
+        public int? MessageID { get; set; }
         public int? SenderID { get; set; }
         public int? ReceiverID { get; set; }
         public int? ListingID { get; set; }
@@ -17,7 +17,7 @@ namespace MarketingAds.Models
         public User? Receiver { get; set; }
         [ForeignKey("ListingID")]
         public Listing? Listing { get; set; }
-        public int StatusId { get; set; } = 1;
+        public int? StatusId { get; set; } = 1;
         [ForeignKey("StatusId")]
         public virtual Status? Status { get; set; }
     }
