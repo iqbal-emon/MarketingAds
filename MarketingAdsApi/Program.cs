@@ -43,6 +43,7 @@ builder.Services.AddTransient<CategoryService>();
 builder.Services.AddTransient<LocationService>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddTransient<ProductService>();
 
 
 
@@ -53,6 +54,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseStaticFiles();
 }
 
 app.UseHttpsRedirection();

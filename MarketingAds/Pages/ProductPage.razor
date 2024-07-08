@@ -1,0 +1,202 @@
+﻿@page "/Product"
+@using MarketingAds.Models;
+@using MarketingAds.Components.Product;
+@using MarketingAdsLibrary.Services;
+@inject ProductService productService
+@inject DialogService DialogService
+@inject StatusService statusService
+@if (load == true)
+{
+
+
+    <div class=" mt-5">
+        <div class="d-flex justify-content-between">
+            <h3>Location Details</h3>
+            @* <button class="btn btn-primary" @onclick="showModel">Add House</button> *@
+            <RadzenButton Text="Add Location" Click="showModel" />
+        </div>
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="12" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@productList" ColumnWidth="200px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
+            <Columns>
+                <RadzenDataGridColumn Property="ListingID" Title="ListingID" Width="80px" TextAlign="TextAlign.Center" />
+                
+                <RadzenDataGridColumn Property="Title" Title="Title" Width="160px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Description" Title="Description" Width="160px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Price" Title="Price" Width="160px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Category.CategoryID" Title="Category" Width="160px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Location" Title="Location" Width="160px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Condition" Title="Condition" Width="160px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="Listing" Property="Images" Title="Images" Width="200px">
+                    <Template Context="listing">
+                        @foreach (var image in listing.Images)
+                        {
+                            <img src="@image.ImageURL" alt="Listing Image" style="max-width: 100%; max-height: 100%; margin-bottom: 5px;" />
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+
+
+
+                <RadzenDataGridColumn Title="Action" Width="100px" Filterable="false">
+                    <Template Context="product">
+                        @if (product.StatusId == 3)
+                        {
+                            <RadzenButton Disabled="true" Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args =>DeleteProduct(product.ListingID.HasValue ? product.ListingID.Value : 0))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                        }
+                        else
+                        {
+                            <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteProduct(product.ListingID.HasValue ? product.ListingID.Value : 0))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                        }
+                        <RadzenButton Text="Edit" Icon="edit" Click="@(args => UpdateProduct(product.ListingID.HasValue ? product.ListingID.Value : 0))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
+
+                    </Template>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+
+}
+else
+{
+    <h1>Loading..</h1>
+}
+@code {
+    public List<Listing> productList;
+    bool showModal = false;
+    bool DeleteModel = false;
+    bool EditModal = false;
+    private int roleToDelete;
+    private List<Status> statusOptions = new List<Status>();
+    public bool load = false;
+    public IFormFile? ImageUrl;
+    IList<Listing> selectedStatus;
+    protected override async Task OnInitializedAsync()
+    {
+        productList = await productService.GetProduct();
+        load = true;
+        selectedStatus = new List<Listing>() { productList.FirstOrDefault() };
+
+    }
+
+
+
+    public Listing product = new Listing();
+    public Listing? productUpdate = new Listing();
+    public async void SaveProduct()
+    {
+
+        showModal = false;
+        await productService.AddProduct(product, ImageUrl);
+
+        product = new Listing();
+        productList = await productService.GetProduct();
+        StateHasChanged();
+
+
+    }
+
+    void HideModal()
+    {
+        showModal = false;
+        product = new Listing();
+
+    }
+    void hideDelete()
+    {
+        DeleteModel = false;
+    }
+
+    void hideUpdate()
+    {
+        EditModal = false;
+
+    }
+    async Task showModel()
+    {
+        statusOptions = await statusService.GetStatus();
+
+        showModal = true;
+    }
+
+    async Task UpdateProduct(int categoryId)
+    {
+        // Call the service method with the parsed memberId
+        var roleMember = await productService.GetProductById(categoryId);
+        statusOptions = await statusService.GetStatus();
+
+        EditModal = true;
+        if (roleMember != null)
+        {
+            productUpdate = new Listing()
+                {
+                    Title = roleMember.Title,
+                    Description = roleMember.Description,
+                    CategoryID = roleMember.CategoryID,
+                    UserID = roleMember.UserID,
+                    Location = roleMember.Location,
+                    Condition=roleMember.Condition,
+                    StatusId = roleMember.StatusId
+
+                };
+
+        }
+        else
+        {
+
+        }
+    }
+
+    public async Task ShowConfirmationDialog()
+    {
+        bool? result = await DialogService.Confirm("Are you sure?", "MyTitle", new ConfirmOptions()
+            {
+                OkButtonText = "Delete",
+                CancelButtonText = "Cancel"
+            });
+
+        if (result == true)
+        {
+            await DeleteConfirmed();
+        }
+        else
+        {
+            hideDelete();
+        }
+    }
+
+
+
+    protected async Task DeleteProduct(int roleId)
+    {
+        roleToDelete = roleId;
+        DeleteModel = true;
+        ShowConfirmationDialog();
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        await productService.DeleteAsync(roleToDelete);
+        productList = await productService.GetProduct();
+        StateHasChanged();
+
+        // Reset variables
+        roleToDelete = 0;
+        DeleteModel = false;
+    }
+
+    private async Task UpdateProductnBtn()
+    {
+        EditModal = false;
+        await productService.UpdateProduct(productUpdate);
+
+        productList = await productService.GetProduct();
+
+    }
+    string ModalStyle => showModal ? "display: block;" : "display: none;";
+    string DeleteModalStyle => DeleteModel ? "display: block;" : "display: none;";
+    string EditModalStyle => EditModal ? "display: block;" : "display: none;";
+
+
+
+}

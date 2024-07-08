@@ -30,6 +30,8 @@ builder.Services.AddScoped<StatusService>();
 builder.Services.AddTransient<CategoryService>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<LocationService>();
+builder.Services.AddTransient<ProductService>();
+
 
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<DialogService>();
