@@ -40,6 +40,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddTransient<Marketing>();
 builder.Services.AddTransient<StatusService>();
 builder.Services.AddTransient<CategoryService>();
+builder.Services.AddTransient<LocationService>();
+builder.Services.AddTransient<UserService>();
 builder.Services.AddScoped<AuthService>();
 
 

@@ -1,4 +1,5 @@
 ﻿@page "/Status"
+@attribute [Authorize(Roles = "Admin")]
 @using MarketingAds.Models;
 @using MarketingAdsLibrary.Services;
 @using MarketingAds.Components;

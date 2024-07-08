@@ -1,0 +1,104 @@
+﻿@page "/User"
+@attribute [Authorize(Roles ="Admin")]
+@using MarketingAds.Models;
+@using MarketingAdsLibrary.Services;
+@using MarketingAds.Components.Category;
+@inject DialogService DialogService
+@inject UserService userService;
+<div class=" mt-5">
+    <div class="d-flex justify-content-between">
+        <h3>User Details</h3>
+    </div>
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="12" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@users" ColumnWidth="200px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
+        <Columns>
+            <RadzenDataGridColumn Property="UserID" Title="UserID" Width="80px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn Property="Username"  Title="Username" Width="80px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn Property="Email" Title="Email" Width="160px" />
+            <RadzenDataGridColumn Property="Phone" Title="Phone" Width="160px" />
+            <RadzenDataGridColumn Property="FullName" Title="FullName" Width="160px" />
+            <RadzenDataGridColumn Property="Address" Title="Address" Width="160px" />
+        <RadzenDataGridColumn Title="Action" Width="200px" Filterable="false">
+                    <Template Context="user">
+                    <RadzenButton Text="@GetButtonText(user.StatusId)"
+                                  Icon="delete"
+                                  Style="margin-right: 10px;"
+                                  Click="@(args => StatusChange(user.UserID, user.StatusId == 1 ? 2 : 1))"
+                                  ButtonStyle="ButtonStyle.Danger"
+                                  Size="ButtonSize.Small" />
+
+
+                    </Template>
+                </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</div>
+@code {
+    public List<User> users;
+    public bool load = false;
+    bool DeleteModel = false;
+    int idStatus;
+    private int roleToDelete;
+    IList<User>? selectedStatus;
+    protected override async Task OnInitializedAsync()
+    {
+        users = await userService.GetUsers();
+        load = true;
+        selectedStatus = new List<User>() { users.FirstOrDefault() };
+
+    }
+    protected async Task StatusChange(int roleId,int statusId)
+    {
+        roleToDelete = roleId;
+        DeleteModel = true;
+        idStatus = statusId;
+        ShowConfirmationDialog(statusId);
+    }
+    public async Task ShowConfirmationDialog(int statusId)
+    {
+        bool? result = await DialogService.Confirm("Are you sure?", "MyTitle", new ConfirmOptions()
+            {
+                OkButtonText = statusId == 1 ? "Unbanned" : "Banned",
+                CancelButtonText = "Cancel"
+            });
+
+        if (result == true)
+        {
+            await DeleteConfirmed();
+        }
+        else
+        {
+            hideDelete();
+        }
+    }
+    private async Task DeleteConfirmed()
+    {
+        var isSuccesful=await userService.StatusChanged(roleToDelete,idStatus);
+        if (isSuccesful)
+        {
+            users = await userService.GetUsers();
+            StateHasChanged();
+            // Reset variables
+            roleToDelete = 0;
+            DeleteModel = false;
+            idStatus = 0;
+
+
+        }
+    }
+    void hideDelete()
+    {
+        DeleteModel = false;
+    }
+    private string GetButtonText(int statusId)
+    {
+        return statusId == 1 ? "Ban" : "Unban";
+    }
+
+    private string GetButtonIcon(int statusId)
+    {
+        return statusId == 1 ? "ban" : "unban";
+    }
+    string DeleteModalStyle => DeleteModel ? "display: block;" : "display: none;";
+
+}

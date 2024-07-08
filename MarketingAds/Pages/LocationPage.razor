@@ -1,11 +1,12 @@
-﻿@page "/Category"
-@attribute [Authorize(Roles = "Admin")]
+﻿@page "/Location"
+@attribute [Authorize(Roles ="Admin")]
 @using MarketingAds.Models;
 @using MarketingAdsLibrary.Services;
-@using MarketingAds.Components.Category;
-@inject CategoryService categoryService
+@using MarketingAds.Components.Location;
 @inject DialogService DialogService
-@inject StatusService statusService
+@inject LocationService locationService;
+@inject StatusService statusService;
+
 
 
 @if (load == true)
@@ -14,26 +15,26 @@
 
     <div class=" mt-5">
         <div class="d-flex justify-content-between">
-            <h3>Category Details</h3>
+            <h3>Location Details</h3>
             @* <button class="btn btn-primary" @onclick="showModel">Add House</button> *@
-            <RadzenButton Text="Add Category" Click="showModel" />
+            <RadzenButton Text="Add Location" Click="showModel" />
         </div>
         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="12" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                        Data="@categoris" ColumnWidth="200px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
+                        Data="@locations" ColumnWidth="200px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
             <Columns>
-                <RadzenDataGridColumn Property="CategoryID"  Title="CategoryName" Width="80px" TextAlign="TextAlign.Center" />
-                <RadzenDataGridColumn Property="CategoryName" Title="Name" Width="160px" />
-                <RadzenDataGridColumn Title="Action" Width="200px" Filterable="false">
-                    <Template Context="category">
-                        @if (category.StatusId == 3)
+                <RadzenDataGridColumn Property="LocationID" Title="LocationID" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="LocationName" Title="LocationName" Width="160px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Title="Action" Width="100px" Filterable="false">
+                    <Template Context="location">
+                        @if (location.StatusId == 3)
                         {
-                            <RadzenButton Disabled="true" Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteCategory(category.CategoryID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                            <RadzenButton Disabled="true" Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteLocation(location.LocationID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
                         }
                         else
                         {
-                            <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteCategory(category.CategoryID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                            <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteLocation(location.LocationID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
                         }
-                        <RadzenButton Text="Edit" Icon="edit" Click="@(args => UpdateCategory(category.CategoryID))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
+                        <RadzenButton Text="Edit" Icon="edit" Click="@(args => UpdateLocation(location.LocationID))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
 
                     </Template>
                 </RadzenDataGridColumn>
@@ -43,16 +44,16 @@
     </div>
     <div class="modal px-5" tabindex="-1" style="@ModalStyle">
     <div class="modal px-5" tabindex="-1" style="@ModalStyle">
-            <CategoryAddComponent category="category" SaveCategory="Savecategory" HideModal="HideModal" statusOptions="statusOptions" />
+            <LocationAddComponent location="location" SaveLocation="SaveLocation" HideModal="HideModal" statusOptions="statusOptions" />
 </div>
 
     </div>
 
 
-    @if (UpdateCategory != null)
+    @if (UpdateLocation != null)
     {
         <div class="modal px-5" tabindex="-1" style="@EditModalStyle">
-            <CategoryUpdateComponent updateCategory="categoryUpdate" UpdateCategoryBtn="UpdateCategoryBtn" statusOptions="statusOptions" hideUpdate="hideUpdate" />
+            <LocationUpdateComponent updateLocation="locationUpdate" UpdateLocationBtn="UpdateLocationBtn" statusOptions="statusOptions" hideUpdate="hideUpdate" />
         </div>
     }
 
@@ -62,36 +63,35 @@ else
 {
     <h1>Loading..</h1>
 }
-
 @code {
-    public List<Category> categoris;
+    public List<Location> locations;
     bool showModal = false;
     bool DeleteModel = false;
     bool EditModal = false;
     private int roleToDelete;
     private List<Status> statusOptions = new List<Status>();
     public bool load = false;
-    IList<Category> selectedStatus;
+    IList<Location> selectedStatus;
     protected override async Task OnInitializedAsync()
     {
-        categoris = await categoryService.GetCategory();
+        locations = await locationService.GetLocation();
         load = true;
-        selectedStatus = new List<Category>() { categoris.FirstOrDefault() };
+        selectedStatus = new List<Location>() { locations.FirstOrDefault() };
 
     }
 
 
 
-    public Category category = new Category();
-    public Category? categoryUpdate = new Category();
-    public async void Savecategory()
+    public Location location = new Location();
+    public Location? locationUpdate = new Location();
+    public async void SaveLocation()
     {
 
         showModal = false;
-        await categoryService.AddCategory(category);
+        await locationService.AddLocation(location);
 
-        category = new Category();
-        categoris = await categoryService.GetCategory();
+        location = new Location();
+        locations = await locationService.GetLocation();
         StateHasChanged();
 
 
@@ -100,7 +100,7 @@ else
     void HideModal()
     {
         showModal = false;
-        category = new Category();
+        location = new Location();
 
     }
     void hideDelete()
@@ -120,19 +120,19 @@ else
         showModal = true;
     }
 
-    async Task UpdateCategory(int categoryId)
+    async Task UpdateLocation(int categoryId)
     {
         // Call the service method with the parsed memberId
-        var roleMember = await categoryService.GetCategoryById(categoryId);
+        var roleMember = await locationService.GetLocationById(categoryId);
         statusOptions = await statusService.GetStatus();
 
         EditModal = true;
         if (roleMember != null)
         {
-            categoryUpdate = new Category()
+            locationUpdate = new Location()
                 {
-                    CategoryID = roleMember.CategoryID,
-                    CategoryName = roleMember.CategoryName,
+                    LocationID = roleMember.LocationID,
+                    LocationName = roleMember.LocationName,
                     StatusId = roleMember.StatusId
 
                 };
@@ -164,7 +164,7 @@ else
 
 
 
-    protected async Task DeleteCategory(int roleId)
+    protected async Task DeleteLocation(int roleId)
     {
         roleToDelete = roleId;
         DeleteModel = true;
@@ -173,8 +173,8 @@ else
 
     private async Task DeleteConfirmed()
     {
-        await categoryService.deleteAsync(roleToDelete);
-        categoris = await categoryService.GetCategory();
+        await locationService.DeleteAsync(roleToDelete);
+        locations = await locationService.GetLocation();
         StateHasChanged();
 
         // Reset variables
@@ -182,12 +182,12 @@ else
         DeleteModel = false;
     }
 
-    private async Task UpdateCategoryBtn()
+    private async Task UpdateLocationBtn()
     {
         EditModal = false;
-        await categoryService.updatedateCategory(categoryUpdate);
+        await locationService.UpdateLocation(locationUpdate);
 
-        categoris = await categoryService.GetCategory();
+        locations = await locationService.GetLocation();
 
     }
     string ModalStyle => showModal ? "display: block;" : "display: none;";

@@ -2,26 +2,26 @@
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Update Status</h5>
+            <h5 class="modal-title">Update Category</h5>
             <button type="button" class="btn-close" aria-label="Close" @onclick="hideUpdate"></button>
         </div>
         <div class="modal-body">
-            <RadzenTemplateForm Data="@updateStatus" TItem="Status" Submit="@UpdateStatusBtn">
+            <RadzenTemplateForm Data="@updateLocation" TItem="Location" Submit="@UpdateLocationBtn">
                 <div class="rz-p-0 rz-p-md-12">
 
 
                     <RadzenRow Gap="1rem">
                         <RadzenColumn Size="12">
                             <RadzenStack>
-                                <RadzenFormField Text="Status Name:" Variant="Variant.Filled">
-                                    <RadzenTextBox @bind-Value="updateStatus.Name" Required="true" Style="width: 100%;" />
+                                <RadzenFormField Text="Location Name:" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="updateLocation.LocationName" Required="true" Style="width: 100%;" />
                                 </RadzenFormField>
 
-                                <RadzenFormField Text="Status ShortForm:" Variant="Variant.Filled">
-                                    <RadzenTextBox @bind-Value="updateStatus.ShorForm" Required="true" Style="width: 100%;" />
+                                <RadzenFormField Text="Status:" Variant="Variant.Filled">
+                                    <RadzenDropDown @bind-Value="updateLocation.StatusId" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Style="width: 100%;" Required="true" />
                                 </RadzenFormField>
 
-                           
+
                                 <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
                             </RadzenStack>
                         </RadzenColumn>
@@ -35,10 +35,12 @@
 </div>
 @code {
     [Parameter]
-    public Status updateStatus { get; set; }
+    public Location? updateLocation { get; set; }
     [Parameter]
-    public EventCallback UpdateStatusBtn { get; set; }
+    public EventCallback UpdateLocationBtn { get; set; }
     [Parameter]
     public EventCallback hideUpdate { get; set; }
+    [Parameter]
+    public List<Status> statusOptions { get; set; }
 
 }

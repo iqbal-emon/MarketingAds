@@ -28,6 +28,9 @@ builder.Services.AddTransient<AuthService>();
 builder.Services.AddScoped<AuthStateProvider>();
 builder.Services.AddScoped<StatusService>();
 builder.Services.AddTransient<CategoryService>();
+builder.Services.AddTransient<UserService>();
+builder.Services.AddTransient<LocationService>();
+
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<ProtectedLocalStorage>();
