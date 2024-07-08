@@ -27,10 +27,11 @@ builder.Services.AddTransient<Marketing>();
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddScoped<AuthStateProvider>();
 builder.Services.AddScoped<StatusService>();
+builder.Services.AddTransient<CategoryService>();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<ProtectedLocalStorage>();
-builder.Services.AddTransient<DeleteComponent>();
+
 
 builder.Services.AddAuthorizationCore();
 var app = builder.Build();

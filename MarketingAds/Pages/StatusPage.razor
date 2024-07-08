@@ -3,7 +3,7 @@
 @using MarketingAdsLibrary.Services;
 @using MarketingAds.Components;
 @inject StatusService statusService;
-@inject DeleteComponent deleteComponent;
+@inject DialogService DialogService
 
 
 @if(load==true){
@@ -23,7 +23,7 @@
                 <RadzenDataGridColumn Property="ShorForm" Title="ShorForm" Width="200px" />
                 <RadzenDataGridColumn Title="Action" Width="200px" Filterable="false">
                     <Template Context="status">
-                        <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteStatus(status.Id.HasValue ? status.Id.Value : 0))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                        @* <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteStatus(status.Id.HasValue ? status.Id.Value : 0))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" /> *@
                         <RadzenButton Text="Edit" Icon="edit" Style="margin-right: 10px;" Click="@(args => UpdateStatus(status.Id.HasValue ? status.Id.Value : 0))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
 
 
@@ -45,13 +45,7 @@
                 <StatusUpdateComponent updateStatus="statusUpdate" UpdateStatusBtn="UpdateStatusBtn" hideUpdate="hideUpdate" />
         </div>
         }
-    <div   style="@DeleteModalStyle">
-       
-         @{
-            deleteComponent.ShowConfirmationDialog();
-        }
-        
-    </div>
+   
 
 }
 else
@@ -73,9 +67,9 @@ else
         statuss = await statusService.GetStatus();
         load = true;
         selectedStatus = new List<Status>() { statuss.FirstOrDefault() };
-       
+
     }
-  
+
 
 
     public Status status = new Status();
@@ -84,11 +78,14 @@ else
     {
 
         showModal = false;
-        await statusService.AddStatus(status);
-
+        bool IsSucceful=await statusService.AddStatus(status);
+        if (IsSucceful)
+        {
         status = new Status();
         statuss = await statusService.GetStatus();
         StateHasChanged();
+            
+        }
 
 
     }
@@ -139,7 +136,23 @@ else
         }
     }
 
+    public async Task ShowConfirmationDialog()
+    {
+        bool? result = await DialogService.Confirm("Are you sure?", "MyTitle", new ConfirmOptions()
+            {
+                OkButtonText = "Delete",
+                CancelButtonText = "Cancel"
+            });
 
+        if (result == true)
+        {
+            await DeleteConfirmed();
+        }
+        else
+        {
+            hideDelete();
+        }
+    }
 
 
 
@@ -147,6 +160,7 @@ else
     {
         roleToDelete = roleId;
         DeleteModel = true;
+        ShowConfirmationDialog();
     }
 
     private async Task DeleteConfirmed()
@@ -154,6 +168,7 @@ else
         await statusService.deleteAsync(roleToDelete);
         Console.WriteLine(roleToDelete);
         statuss = await statusService.GetStatus();
+        StateHasChanged();
 
 
         // Reset variables

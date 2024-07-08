@@ -30,7 +30,7 @@ namespace MarketingAdsApi.Controllers
 
 
         [HttpPost("CreateAccount")]
-        public async Task CreateAccount( string? Password, string? email)
+        public async Task CreateAccount(string? email, string? Password)
         {
             User user = new User();
             user.PasswordHash = Password;
@@ -41,12 +41,12 @@ namespace MarketingAdsApi.Controllers
         }
         [HttpPost("login")]
        
-        public async Task<IActionResult> Login(string? Password,string? email )
+        public async Task<IActionResult> Login(string? email, string? Password,string? UserRole)
         {
             User user = new();
             user.Email = email;
             user.PasswordHash=Password;
-            user.UserRole = "buyer";
+            user.UserRole = UserRole;
 
             var newUser = await _authService.LogIn(user);
             if (newUser!=null)

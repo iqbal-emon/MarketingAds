@@ -1,0 +1,46 @@
+﻿@using MarketingAds.Models;
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Update Category</h5>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="hideUpdate"></button>
+        </div>
+        <div class="modal-body">
+            <RadzenTemplateForm Data="@updateCategory" TItem="Category" Submit="@UpdateCategoryBtn">
+                <div class="rz-p-0 rz-p-md-12">
+
+
+                    <RadzenRow Gap="1rem">
+                        <RadzenColumn Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="House Name:" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="updateCategory.CategoryName" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+
+                                <RadzenFormField Text="Status:" Variant="Variant.Filled">
+                                    <RadzenDropDown @bind-Value="updateCategory.StatusId" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Style="width: 100%;" Required="true" />
+                                </RadzenFormField>
+
+
+                                <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </div>
+            </RadzenTemplateForm>
+        </div>
+
+
+    </div>
+</div>
+@code {
+    [Parameter]
+    public Category? updateCategory { get; set; }
+    [Parameter]
+    public EventCallback UpdateCategoryBtn { get; set; }
+    [Parameter]
+    public EventCallback hideUpdate { get; set; }
+    [Parameter]
+    public List<Status> statusOptions { get; set; }
+
+}

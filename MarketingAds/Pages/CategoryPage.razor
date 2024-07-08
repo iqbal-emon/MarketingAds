@@ -1,0 +1,198 @@
+﻿@page "/Category"
+@using MarketingAds.Models;
+@using MarketingAdsLibrary.Services;
+@using MarketingAds.Components.Category;
+@inject CategoryService categoryService
+@inject DialogService DialogService
+@inject StatusService statusService
+
+
+@if (load == true)
+{
+
+
+    <div class=" mt-5">
+        <div class="d-flex justify-content-between">
+            <h3>Category Details</h3>
+            @* <button class="btn btn-primary" @onclick="showModel">Add House</button> *@
+            <RadzenButton Text="Add Category" Click="showModel" />
+        </div>
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="12" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@categoris" ColumnWidth="200px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
+            <Columns>
+                <RadzenDataGridColumn Property="CategoryID" Filterable="false" Title="CategoryName" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="CategoryName" Title="Name" Width="160px" />
+                <RadzenDataGridColumn Title="Action" Width="200px" Filterable="false">
+                    <Template Context="category">
+                        @if (category.StatusId == 3)
+                        {
+                            <RadzenButton Disabled="true" Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteCategory(category.CategoryID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                        }
+                        else
+                        {
+                            <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteCategory(category.CategoryID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                        }
+                        <RadzenButton Text="Edit" Icon="edit" Click="@(args => UpdateCategory(category.CategoryID))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
+
+                    </Template>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+    <div class="modal px-5" tabindex="-1" style="@ModalStyle">
+    <div class="modal px-5" tabindex="-1" style="@ModalStyle">
+            <CategoryAddComponent category="category" SaveCategory="Savecategory" HideModal="HideModal" statusOptions="statusOptions" />
+</div>
+
+    </div>
+
+
+    @if (UpdateCategory != null)
+    {
+        <div class="modal px-5" tabindex="-1" style="@EditModalStyle">
+            <CategoryUpdateComponent updateCategory="categoryUpdate" UpdateCategoryBtn="UpdateCategoryBtn" statusOptions="statusOptions" hideUpdate="hideUpdate" />
+        </div>
+    }
+
+
+}
+else
+{
+    <h1>Loading..</h1>
+}
+
+@code {
+    public List<Category> categoris;
+    bool showModal = false;
+    bool DeleteModel = false;
+    bool EditModal = false;
+    private int roleToDelete;
+    private List<Status> statusOptions = new List<Status>();
+    public bool load = false;
+    IList<Category> selectedStatus;
+    protected override async Task OnInitializedAsync()
+    {
+        categoris = await categoryService.GetCategory();
+        load = true;
+        selectedStatus = new List<Category>() { categoris.FirstOrDefault() };
+
+    }
+
+
+
+    public Category category = new Category();
+    public Category? categoryUpdate = new Category();
+    public async void Savecategory()
+    {
+
+        showModal = false;
+        await categoryService.AddCategory(category);
+
+        category = new Category();
+        categoris = await categoryService.GetCategory();
+        StateHasChanged();
+
+
+    }
+
+    void HideModal()
+    {
+        showModal = false;
+        category = new Category();
+
+    }
+    void hideDelete()
+    {
+        DeleteModel = false;
+    }
+
+    void hideUpdate()
+    {
+        EditModal = false;
+
+    }
+    async Task showModel()
+    {
+        statusOptions = await statusService.GetStatus();
+
+        showModal = true;
+    }
+
+    async Task UpdateCategory(int categoryId)
+    {
+        // Call the service method with the parsed memberId
+        var roleMember = await categoryService.GetCategoryById(categoryId);
+        statusOptions = await statusService.GetStatus();
+
+        EditModal = true;
+        if (roleMember != null)
+        {
+            categoryUpdate = new Category()
+                {
+                    CategoryID = roleMember.CategoryID,
+                    CategoryName = roleMember.CategoryName,
+                    StatusId = roleMember.StatusId
+
+                };
+
+        }
+        else
+        {
+
+        }
+    }
+
+    public async Task ShowConfirmationDialog()
+    {
+        bool? result = await DialogService.Confirm("Are you sure?", "MyTitle", new ConfirmOptions()
+            {
+                OkButtonText = "Delete",
+                CancelButtonText = "Cancel"
+            });
+
+        if (result == true)
+        {
+            await DeleteConfirmed();
+        }
+        else
+        {
+            hideDelete();
+        }
+    }
+
+    
+
+    protected async Task DeleteCategory(int roleId)
+    {
+        roleToDelete = roleId;
+        DeleteModel = true;
+        ShowConfirmationDialog();
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        await categoryService.deleteAsync(roleToDelete);
+        categoris = await categoryService.GetCategory();
+
+
+        // Reset variables
+        roleToDelete = 0;
+        DeleteModel = false;
+    }
+
+    private async Task UpdateCategoryBtn()
+    {
+        EditModal = false;
+        await categoryService.updatedateCategory(categoryUpdate);
+
+        categoris = await categoryService.GetCategory();
+
+    }
+    string ModalStyle => showModal ? "display: block;" : "display: none;";
+    string DeleteModalStyle => DeleteModel ? "display: block;" : "display: none;";
+    string EditModalStyle => EditModal ? "display: block;" : "display: none;";
+
+
+
+}

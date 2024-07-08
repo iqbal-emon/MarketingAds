@@ -69,8 +69,8 @@
     private async Task HandleLogIn()
     {
 
-        var password = HashPassword();
-        user.PasswordHash = password;
+       
+        user.UserRole = "Buyer";
         var NewUser =await authService.LogIn(user);
         if (NewUser!=null)
         {
@@ -94,12 +94,5 @@
 
     }
 
-    private string HashPassword()
-    {
-        using (SHA256 sha256 = SHA256.Create())
-        {
-            byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(user.PasswordHash));
-            return user.PasswordHash = Convert.ToBase64String(hashedBytes);
-        }
-    }
+  
 }

@@ -38,7 +38,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddTransient<Marketing>();
-builder.Services.AddScoped<StatusService>();
+builder.Services.AddTransient<StatusService>();
+builder.Services.AddTransient<CategoryService>();
 builder.Services.AddScoped<AuthService>();
 
 

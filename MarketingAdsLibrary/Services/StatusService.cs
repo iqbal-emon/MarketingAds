@@ -22,10 +22,11 @@ namespace MarketingAdsLibrary.Services
         {
             return await _context.Status.ToListAsync();
         }
-        public async Task AddStatus(Status status)
+        public async Task <bool>AddStatus(Status status)
         {
             _context.Status.Add(status);
             await _context.SaveChangesAsync();
+            return true;
         }
         public async Task<bool> deleteAsync(int statusId)
         {
@@ -44,7 +45,7 @@ namespace MarketingAdsLibrary.Services
         {
             return await _context.Status.FirstOrDefaultAsync(r => r.Id == statusId);
         }
-        public async Task updatedateStatus(Status updateStatus)
+        public async Task <bool>updatedateStatus(Status updateStatus)
         {
             var existingStatus = await _context.Status.FindAsync(updateStatus.Id);
 
@@ -54,11 +55,9 @@ namespace MarketingAdsLibrary.Services
                 existingStatus.ShorForm = updateStatus.ShorForm;
                 _context.Status.Update(existingStatus);
                 await _context.SaveChangesAsync();
+                return true;
             }
-            else
-            {
-                throw new InvalidOperationException("Member not found");
-            }
+            return false;
         }
 
     }
