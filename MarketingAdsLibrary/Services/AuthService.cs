@@ -36,7 +36,7 @@ namespace MarketingAdsLibrary.Services
 
 
             var user = await _context.Users.FirstOrDefaultAsync(u =>
-                    ( u.Email == newUser.Email) &&
+                    ( u.Username == newUser.Username) &&
                     u.PasswordHash == newUser.PasswordHash&& u.StatusId==1);
 
             return user;

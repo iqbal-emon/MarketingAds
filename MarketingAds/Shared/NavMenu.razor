@@ -1,4 +1,10 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inherits LayoutComponentBase
+@using MarketingAds.Auth;
+@inject AuthStateProvider AuthStateProvider
+@using System.Security.Claims
+@inject NavigationManager NavigationManager
+@inject IJSRuntime js
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">MarketingAds</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -35,7 +41,11 @@
                     <span class="oi oi-home" aria-hidden="true"></span> Product
                 </NavLink>
             </div>
-
+            <div class="nav-item px-3">
+                <NavLink class="nav-link">
+                    <button class="btn btn-danger" @onclick="Logout">Log out</button>
+                </NavLink>
+            </div>
             
         </Authorized>
         
@@ -66,7 +76,11 @@
                     </NavLink>
 
                 </div>
-                
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link">
+                        <button class="btn btn-danger" @onclick="Logout">Log out</button>
+                    </NavLink>
+                </div>
        
     </nav>
             </Authorized>
@@ -86,5 +100,12 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+    private async Task Logout()
+    {
+
+        await AuthStateProvider.UpdateAuthenticationState(null);
+        await js.InvokeVoidAsync("localStorage.clear");
+        NavigationManager.NavigateTo("/login", true);
     }
 }

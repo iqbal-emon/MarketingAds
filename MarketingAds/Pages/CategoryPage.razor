@@ -18,6 +18,7 @@
             @* <button class="btn btn-primary" @onclick="showModel">Add House</button> *@
             <RadzenButton Text="Add Category" Click="showModel" />
         </div>
+        <div style="height:300px; overflow: scroll">
         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="12" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                         Data="@categoris" ColumnWidth="200px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
             <Columns>
@@ -41,7 +42,7 @@
             </Columns>
         </RadzenDataGrid>
     </div>
-  
+ </div>
     <div class="modal px-5" tabindex="-1" style="@ModalStyle">
             <CategoryAddComponent category="category" SaveCategory="Savecategory" HideModal="HideModal" statusOptions="statusOptions" />
 </div>
