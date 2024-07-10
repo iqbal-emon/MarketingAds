@@ -79,8 +79,8 @@ else
     {
 
         showModal = false;
-        bool IsSucceful=await statusService.AddStatus(status);
-        if (IsSucceful)
+        Status IsSucceful=await statusService.AddStatus(status);
+        if (IsSucceful!=null)
         {
         status = new Status();
         statuss = await statusService.GetStatus();

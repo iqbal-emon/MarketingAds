@@ -23,6 +23,7 @@ namespace MarketingAdsApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetStatus()
         {
+            try { 
             var getAllStatus = await _statusService.GetStatus();
             if (getAllStatus != null)
             {
@@ -30,24 +31,37 @@ namespace MarketingAdsApi.Controllers
             }
             else
             {
-                return BadRequest("No Status Exist.");
+                    return BadRequest(new { message = "Not Successful" });
+            }
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+
             }
         }
 
         [HttpPost("AddStatus")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddStatus(string StatusName, string ShortForm)
+        public async Task<IActionResult> AddStatus(Status status)
         {
-            Status status = new Status();
-            status.Name = StatusName;
-            status.ShorForm = ShortForm;
-          bool statusSuccess=await _statusService.AddStatus(status);
-            if (statusSuccess)
+            try
             {
-                return Ok("Succesful");
+          Status statusSuccess=await _statusService.AddStatus(status);
+                if (statusSuccess != null)
+                {
+                    return Ok(statusSuccess);
+                }
+                else
+                {
+                    return BadRequest(new { message = "Not Successful" });
+                }
+
             }
-            else {
-             return BadRequest("Not Succesful");
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+
             }
         }
         [HttpPut("UpdateStatus")]
@@ -55,29 +69,47 @@ namespace MarketingAdsApi.Controllers
         public async Task<IActionResult> UpdateStatus(Status status)
         {
 
-            bool statusSuccess = await _statusService.updatedateStatus(status);
-            if (statusSuccess)
+            try
             {
-                return Ok("Updated Succesful");
+            Status statusSuccess = await _statusService.updatedateStatus(status);
+                if (statusSuccess!=null)
+                {
+                    return Ok(statusSuccess);
+                }
+                else
+                {
+                    return BadRequest(new { message = "Not Successful" });
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Not Succesful");
+                return StatusCode(500, new { message = ex.Message });
+
             }
         }
         [HttpDelete("DeleteStatus")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteStatus(int StatusId)
         {
+          
+            try
+            {
+            Status statusSuccess = await _statusService.deleteAsync(StatusId);
+                if (statusSuccess != null)
+                {
+                    return Ok(statusSuccess);
+                }
+                else
+                {
+                    return BadRequest( new {message="Not Successful"});
+                }
 
-            bool statusSuccess = await _statusService.deleteAsync(StatusId);
-            if (statusSuccess)
-            {
-                return Ok("Delete Succesful");
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Not Succesful");
+                return StatusCode(500, new { message = ex.Message });
+
             }
         }
 

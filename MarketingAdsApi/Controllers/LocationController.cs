@@ -23,50 +23,73 @@ namespace MarketingAdsApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Getlocation()
         {
-            var getAlllocation = await _locationService.GetLocation();
+             try
+            {
+                var getAlllocation = await _locationService.GetLocation();
+           
+
             if (getAlllocation != null)
             {
                 return Ok(getAlllocation);
             }
-            else
+                else
+                {
+                    return BadRequest(new { message = "Not Successful" });
+                }
+
+            }
+            catch (Exception ex)
             {
-                return BadRequest("No location Exist.");
+                return StatusCode(500, new { message = ex.Message });
+
             }
         }
+        
 
         [HttpPost("AddLocation")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Addlocation(string locationName, int StatusId)
+        public async Task<IActionResult> Addlocation(Location location)
         {
-            Location location = new Location();
-            location.LocationName = locationName;
-            location.StatusId = StatusId;
-            bool statusSuccess = await _locationService.AddLocation(location);
-            if (statusSuccess)
+            try
             {
-                return Ok("Succesful");
+            Location locationSuccess = await _locationService.AddLocation(location);
+
+            if (locationSuccess != null)
+            {
+                return Ok(locationSuccess);
             }
-            else
+                else
+                {
+                    return BadRequest(new { message = "Not Successful" });
+                }
+
+            }
+            catch (Exception ex)
             {
-                return BadRequest("Not Succesful");
+                return StatusCode(500, new { message = ex.Message });
+
             }
         }
         [HttpPut("UpdateLocation")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateStatus(string locationName, int statusId, int locationId)
+        public async Task<IActionResult> UpdateLocation(Location location)
         {
-            Location location = new Location();
-            location.LocationID = locationId;
-            location.LocationName = locationName;
-            location.StatusId = statusId;
-            bool locationSuccess = await _locationService.UpdateLocation(location);
-            if (locationSuccess)
+            try {
+            Location locationSuccess = await _locationService.UpdateLocation(location);
+            if (locationSuccess!=null)
             {
-                return Ok("Updated Succesful");
+                return Ok(locationSuccess);
             }
             else
             {
-                return BadRequest("Not Succesful");
+                return BadRequest(new { message = "Not Successful" });
+            }
+
+        }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+
             }
         }
         [HttpDelete("DeleteLocation")]
@@ -74,14 +97,23 @@ namespace MarketingAdsApi.Controllers
         public async Task<IActionResult> Deletelocation(int locationId)
         {
 
-            bool statusSuccess = await _locationService.DeleteAsync(locationId);
-            if (statusSuccess)
+            try
             {
-                return Ok("Delete Succesful");
+            Location locationSuccess = await _locationService.DeleteAsync(locationId);
+                if (locationSuccess != null)
+                {
+                    return Ok(locationSuccess);
+                }
+                else
+                {
+                    return BadRequest(new { message = "Not Successful" });
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Not Succesful");
+                return StatusCode(500, new { message = ex.Message });
+
             }
         }
 

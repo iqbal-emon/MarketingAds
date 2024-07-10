@@ -6,7 +6,7 @@ namespace MarketingAds.Models
     {
         public int LocationID { get; set; }
         public string LocationName { get; set; }
-        public ICollection<Listing>? Listings { get; set; }
+        //public ICollection<Listing>? Listings { get; set; }
         public int? StatusId { get; set; } = 1;
         [ForeignKey("StatusId")]
         public virtual Status? Status { get; set; }

@@ -49,11 +49,11 @@ namespace MarketingAds.Data
 
             
 
-            modelBuilder.Entity<Listing>()
-                .HasOne(l => l.Transaction)
-                .WithOne(t => t.Listing)
-                .HasForeignKey<Transaction>(t => t.ListingID)
-                .OnDelete(DeleteBehavior.Restrict); // Example: No cascade delete on Transaction
+            //modelBuilder.Entity<Listing>()
+            //    .HasOne(l => l.Transaction)
+            //    .WithOne(t => t.Listing)
+            //    .HasForeignKey<Transaction>(t => t.ListingID)
+            //    .OnDelete(DeleteBehavior.Restrict); // Example: No cascade delete on Transaction
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Buyer)

@@ -22,13 +22,13 @@ namespace MarketingAdsLibrary.Services
         {
             return await _context.Status.ToListAsync();
         }
-        public async Task <bool>AddStatus(Status status)
+        public async Task <Status>AddStatus(Status status)
         {
             _context.Status.Add(status);
             await _context.SaveChangesAsync();
-            return true;
+            return status;
         }
-        public async Task<bool> deleteAsync(int statusId)
+        public async Task<Status> deleteAsync(int statusId)
         {
             var statusToDelete = await _context.Status.FindAsync(statusId);
 
@@ -36,18 +36,19 @@ namespace MarketingAdsLibrary.Services
             {
                 _context.Status.Remove(statusToDelete);
                 await _context.SaveChangesAsync();
-                return true;
+                return statusToDelete;
             }
 
-            return false;
+            return null;
         }
         public async Task<Status> GetStatusById(int statusId)
         {
             return await _context.Status.FirstOrDefaultAsync(r => r.Id == statusId);
         }
-        public async Task <bool>updatedateStatus(Status updateStatus)
+        public async Task <Status>updatedateStatus(Status updateStatus)
         {
             var existingStatus = await _context.Status.FindAsync(updateStatus.Id);
+       
 
             if (existingStatus != null)
             {
@@ -55,9 +56,11 @@ namespace MarketingAdsLibrary.Services
                 existingStatus.ShorForm = updateStatus.ShorForm;
                 _context.Status.Update(existingStatus);
                 await _context.SaveChangesAsync();
-                return true;
+                return existingStatus;
             }
-            return false;
+           return null;
+            
+           
         }
 
     }

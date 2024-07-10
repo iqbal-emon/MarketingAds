@@ -21,13 +21,13 @@ namespace MarketingAdsLibrary.Services
         {
             return await _context.Categories.ToListAsync();
         }
-        public async Task <bool>AddCategory(Category category)
+        public async Task <Category>AddCategory(Category category)
         {
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
-            return true;
+            return category;
         }
-        public async Task<bool> deleteAsync(int categoryToDelete)
+        public async Task<Category> deleteAsync(int categoryToDelete)
         {
             var categoryTo = await _context.Categories.FindAsync(categoryToDelete);
 
@@ -39,16 +39,16 @@ namespace MarketingAdsLibrary.Services
                 // Save changes to the database
                 await _context.SaveChangesAsync();
 
-                return true;
+                return categoryTo;
             }
 
-            return false;
+            return null;
         }
         public async Task<Category> GetCategoryById(int categoryId)
         {
             return await _context.Categories.FirstOrDefaultAsync(c=>c.CategoryID == categoryId);
         }
-        public async Task <bool>updatedateCategory(Category updateCategory)
+        public async Task <Category>updatedateCategory(Category updateCategory)
         {
             var existingCategory = await _context.Categories.FindAsync(updateCategory.CategoryID);
 
@@ -58,9 +58,9 @@ namespace MarketingAdsLibrary.Services
                 existingCategory.StatusId = updateCategory.StatusId;
                 _context.Categories.Update(existingCategory);
                 await _context.SaveChangesAsync();
-                return true;
+                return existingCategory;
             }
-            return false;
+            return null;
         }
 
 

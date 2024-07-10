@@ -25,7 +25,9 @@ namespace MarketingAdsApi.Controllers
 
         public async Task<IActionResult> UpdateUserStatus(int UserId,int statusId)
         {
- 
+            try
+            {
+
             bool statusSuccess = await _userService.StatusChanged(UserId,statusId);
             if (statusSuccess)
             {
@@ -34,6 +36,13 @@ namespace MarketingAdsApi.Controllers
             else
             {
                 return BadRequest("Not Succesful");
+            }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+
             }
 
         }

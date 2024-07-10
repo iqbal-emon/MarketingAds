@@ -18,13 +18,14 @@ namespace MarketingAdsLibrary.Services
         {
             _context = context;
         }
-        public async Task CreateAccount(User user)
+        public async Task<User> CreateAccount(User user)
         {
             var password = HashPassword(user.PasswordHash);
             user.PasswordHash = password;
             user.UserRole = "Buyer";
             _context.Users.Add(user);
             _context.SaveChanges();
+            return user;
         }
 
         public async Task<User> LogIn(User newUser)
@@ -35,7 +36,7 @@ namespace MarketingAdsLibrary.Services
 
 
             var user = await _context.Users.FirstOrDefaultAsync(u =>
-                    (u.Username == newUser.Username || u.Username == newUser.Email) &&
+                    ( u.Email == newUser.Email) &&
                     u.PasswordHash == newUser.PasswordHash&& u.StatusId==1);
 
             return user;

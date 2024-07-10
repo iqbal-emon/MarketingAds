@@ -48,13 +48,13 @@
                     <Template Context="product">
                         @if (product.StatusId == 3)
                         {
-                            <RadzenButton Disabled="true" Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args =>DeleteProduct(product.ListingID.HasValue ? product.ListingID.Value : 0))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                            <RadzenButton Disabled="true" Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args =>DeleteProduct(product.ListingID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
                         }
                         else
                         {
-                            <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteProduct(product.ListingID.HasValue ? product.ListingID.Value : 0))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                            <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteProduct(product.ListingID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
                         }
-                        <RadzenButton Text="Edit" Icon="edit" Click="@(args => UpdateProduct(product.ListingID.HasValue ? product.ListingID.Value : 0))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
+                        <RadzenButton Text="Edit" Icon="edit" Click="@(args => UpdateProduct(product.ListingID))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
 
                     </Template>
                 </RadzenDataGridColumn>

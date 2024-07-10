@@ -128,7 +128,7 @@ namespace MarketingAdsLibrary.Services
             return await _context.Listings.FirstOrDefaultAsync(l => l.ListingID == listingID);
         }
 
-        public async Task<bool> UpdateProduct(Listing updateProduct)
+        public async Task<Listing> UpdateProduct(Listing updateProduct)
         {
             var existingProduct = await _context.Listings.FindAsync(updateProduct.ListingID);
 
@@ -143,9 +143,9 @@ namespace MarketingAdsLibrary.Services
                 existingProduct.StatusId = updateProduct.StatusId;
                 _context.Listings.Update(existingProduct);
                 await _context.SaveChangesAsync();
-                return true;
+                return existingProduct;
             }
-            return false;
+            return null;
         }
     }
 }

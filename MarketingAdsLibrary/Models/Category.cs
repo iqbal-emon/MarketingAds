@@ -9,7 +9,7 @@ namespace MarketingAds.Models
         public string? CategoryName { get; set; }
         
        
-        public ICollection<Listing>? Listings { get; set; }
+        //public ICollection<Listing>? Listings { get; set; }
 
         public int StatusId { get; set; } = 1;
         [ForeignKey("StatusId")]

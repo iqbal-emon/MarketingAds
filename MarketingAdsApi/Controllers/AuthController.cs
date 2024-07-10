@@ -30,19 +30,40 @@ namespace MarketingAdsApi.Controllers
 
 
         [HttpPost("CreateAccount")]
-        public async Task CreateAccount(string? email, string? Password)
+        public async Task<IActionResult> CreateAccount(string? email, string? Password)
         {
+            try
+            {
+
             User user = new User();
             user.PasswordHash = Password;
             user.Email = email;
-            await _authService.CreateAccount(user);
+            User newUser=await _authService.CreateAccount(user);
+                if (newUser != null)
+                {
+                    return Ok(newUser);
+                }
+                else
+                {
+                    return BadRequest(new { message = "Not Successful" });
 
-          
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+
+            }
+
+
         }
         [HttpPost("login")]
        
         public async Task<IActionResult> Login(string? email, string? Password,string? UserRole)
         {
+            try
+            {
+
             User user = new();
             user.Email = email;
             user.PasswordHash=Password;
@@ -58,16 +79,15 @@ namespace MarketingAdsApi.Controllers
             {
                 return BadRequest("Login failed.");
             }
+
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+
+            }
         }
 
-        [HttpGet("Testing")]
-        [Authorize(Roles="string")]
-
-        public async Task<IActionResult> Testing()
-        {
-           
-            return Ok("Its Succesful");
-        }
 
 
 

@@ -19,14 +19,14 @@ namespace MarketingAdsLibrary.Services
             return await _context.Locations.ToListAsync();
         }
 
-        public async Task<bool> AddLocation(Location location)
+        public async Task<Location> AddLocation(Location location)
         {
             _context.Locations.Add(location);
             await _context.SaveChangesAsync();
-            return true;
+            return location;
         }
 
-        public async Task<bool> DeleteAsync(int locationToDelete)
+        public async Task<Location> DeleteAsync(int locationToDelete)
         {
             var location = await _context.Locations.FindAsync(locationToDelete);
 
@@ -38,10 +38,10 @@ namespace MarketingAdsLibrary.Services
                 // Save changes to the database
                 await _context.SaveChangesAsync();
 
-                return true;
+                return location;
             }
 
-            return false;
+            return null;
         }
 
         public async Task<Location> GetLocationById(int locationId)
@@ -49,7 +49,7 @@ namespace MarketingAdsLibrary.Services
             return await _context.Locations.FirstOrDefaultAsync(l => l.LocationID == locationId);
         }
 
-        public async Task<bool> UpdateLocation(Location updateLocation)
+        public async Task<Location> UpdateLocation(Location updateLocation)
         {
             var existingLocation = await _context.Locations.FindAsync(updateLocation.LocationID);
 
@@ -59,9 +59,9 @@ namespace MarketingAdsLibrary.Services
                 existingLocation.StatusId = updateLocation.StatusId;
                 _context.Locations.Update(existingLocation);
                 await _context.SaveChangesAsync();
-                return true;
+                return existingLocation;
             }
-            return false;
+            return null;
         }
     }
 

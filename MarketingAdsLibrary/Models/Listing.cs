@@ -6,7 +6,7 @@ namespace MarketingAds.Models
 {
     public class Listing
     {
-        public int? ListingID { get; set; }
+        public int ListingID { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public decimal? Price { get; set; }
@@ -25,9 +25,9 @@ namespace MarketingAds.Models
         [ForeignKey("LocationID")]
         public Location? Location { get; set; }
         public ICollection<Image>? Images { get; set; }
-        public ICollection<Review>? Reviews { get; set; }
-        public ICollection<Message>? Messages { get; set; }
-        public Transaction? Transaction { get; set; }
+        //public ICollection<Review>? Reviews { get; set; }
+        //public ICollection<Message>? Messages { get; set; }
+        //public Transaction? Transaction { get; set; }
         public int? StatusId { get; set; } = 1;
         [ForeignKey("StatusId")]
         public virtual Status? Status { get; set; }

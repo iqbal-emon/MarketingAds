@@ -23,50 +23,66 @@ namespace MarketingAdsApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetCategory()
         {
-            var getAllCategory = await _categoryService.GetCategory();
-            if (getAllCategory != null)
+            var categorySuccess = await _categoryService.GetCategory();
+            try
             {
-                return Ok(getAllCategory);
+
+            if (categorySuccess != null)
+            {
+                return Ok(categorySuccess);
             }
             else
             {
-                return BadRequest("No Category Exist.");
+                return BadRequest(new { message = "Not Successful" });
+            }
+
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
         [HttpPost("AddCategory")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddCategory(string CategoryName, int StatusId)
+        public async Task<IActionResult> AddCategory(Category category)
         {
-            Category category = new Category();
-            category.CategoryName = CategoryName;
-            category.StatusId = StatusId;
-            bool statusSuccess = await _categoryService.AddCategory(category);
-            if (statusSuccess)
+            try { 
+        
+            Category categorySuccess = await _categoryService.AddCategory(category);
+            if (categorySuccess != null)
             {
-                return Ok("Succesful");
+                return Ok(categorySuccess);
             }
-            else
+                else
+                {
+                    return BadRequest(new { message = "Not Successful" });
+                }
+            }
+            catch (Exception ex)
             {
-                return BadRequest("Not Succesful");
+                return StatusCode(500, new { message = ex.Message });
             }
         }
         [HttpPut("UpdateCategory")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateStatus(string categoryName,int statusId,int categoryId)
+        public async Task<IActionResult> UpdateStatus(Category category)
         {
-            Category category=new Category();
-            category.CategoryID = categoryId;
-            category.CategoryName=categoryName;
-            category.StatusId=statusId;
-            bool categorySuccess = await _categoryService.updatedateCategory(category);
-            if (categorySuccess)
+            try { 
+            Category categorySuccess = await _categoryService.updatedateCategory(category);
+            if (categorySuccess!=null)
             {
-                return Ok("Updated Succesful");
+                return Ok(category);
             }
-            else
+                else
+                {
+                    return BadRequest(new { message = "Not Successful" });
+                }
+            }
+            catch (Exception ex)
             {
-                return BadRequest("Not Succesful");
+                return StatusCode(500, new { message = ex.Message });
             }
         }
         [HttpDelete("DeleteCategory")]
@@ -74,14 +90,20 @@ namespace MarketingAdsApi.Controllers
         public async Task<IActionResult> DeleteCategory(int CategoryId)
         {
             
-            bool statusSuccess = await _categoryService.deleteAsync(CategoryId);
-            if (statusSuccess)
+            try { 
+            Category categorySuccess = await _categoryService.deleteAsync(CategoryId);
+            if (categorySuccess!=null)
             {
-                return Ok("Delete Succesful");
+                return Ok(categorySuccess);
             }
             else
             {
-                return BadRequest("Not Succesful");
+                return BadRequest(new { message = "Not Successful" });
+            }
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500,new { message = ex.Message });
             }
         }
 
