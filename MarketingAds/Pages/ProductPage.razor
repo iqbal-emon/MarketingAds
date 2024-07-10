@@ -8,6 +8,7 @@
 @inject CategoryService categoryService
 @inject ImageUploadService imageUpload
 @inject LocationService  locationService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @if (load == true)
 {
 
@@ -62,7 +63,7 @@
         </RadzenDataGrid>
     </div>
     <div class="modal px-5" tabindex="-1" style="@ModalStyle">
-        <ProductAddComponent LocationOptions="LocationOptions" HideModal="HideModal" statusOptions="statusOptions" categoryOptions="categoryOptions" />
+        <ProductAddComponent radiobtnValue="radiobtnValue" LocationOptions="LocationOptions" product="product" SaveProduct="SaveProduct" HideModal="HideModal" ImagePathChanged="HandleImagePathChanged" statusOptions="statusOptions" categoryOptions="categoryOptions" />
 </div>
 
   
@@ -89,7 +90,8 @@ else
     private List<Category> categoryOptions = new List<Category>();
     private List<Location> LocationOptions = new List<Location>();
     private string imagePath;
-
+    public int? userId { get; set; }
+    public int radiobtnValue { get; set; } = 1;
     public bool load = false;
     public IFormFile uploadImage;
     IList<Listing> selectedStatus;
@@ -98,7 +100,13 @@ else
         productList = await productService.GetProduct();
         load = true;
         selectedStatus = new List<Listing>() { productList.FirstOrDefault() };
-        StateHasChanged();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Int32.Parse(user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value);
+        }
     }
     private async Task HandleImagePathChanged(string newPath)
     {
@@ -185,7 +193,18 @@ else
         }
     }
 
+    async Task SaveProduct()
+    {
+        product.Condition=radiobtnValue==1?"Used":"New";
+        product.UserID = userId;
+        product.Condition = product.Condition;
+        var result = await productService.AddProduct(product, imagePath);
+        productList = await productService.GetProduct();
+        await InvokeAsync(StateHasChanged);
+        showModal = false;
+        radiobtnValue = 1;
 
+    }
 
     protected async Task DeleteProduct(int roleId)
     {
@@ -207,7 +226,6 @@ else
 
     private async Task UpdateProductBtn()
     {
-        EditModal = false;
         var ImageDeletId=productUpdate.ListingID;
         Image image=new();
         image.ListingID=ImageDeletId;
@@ -216,6 +234,8 @@ else
         await productService.UpdateProduct(productUpdate);
         productList = await productService.GetProduct();
         await InvokeAsync(StateHasChanged);
+        EditModal = false;
+
 
     }
     string ModalStyle => showModal ? "display: block;" : "display: none;";

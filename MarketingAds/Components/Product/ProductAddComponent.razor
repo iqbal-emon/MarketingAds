@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Http
 @inject ProductService productService
 @inject ImageUploadService uploadService
-@inject AuthenticationStateProvider AuthenticationStateProvider
+
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
@@ -32,7 +32,7 @@
                                 <RadzenFormField Text="Location:" Variant="Variant.Filled">
                                     <RadzenDropDown @bind-Value="product.LocationID" Data="@LocationOptions" TextProperty="LocationName" ValueProperty="LocationID" Style="width: 100%;" Required="true" />
                                 </RadzenFormField>
-                                    <RadzenRadioButtonList @bind-Value=@value TValue="int" class="mb-5">
+                                <RadzenRadioButtonList @bind-Value=@radiobtnValue TValue="int" >
                                         <Items>
                                             <RadzenRadioButtonListItem Text="Used" Value="1" />
                                             <RadzenRadioButtonListItem Text="New" Value="2" />
@@ -56,48 +56,26 @@
 
 @code {
     [Parameter]
+    public Listing? product { get; set; }
+    [Parameter]
+    public EventCallback SaveProduct { get; set; }
+    [Parameter]
     public List<Status> statusOptions { get; set; }
+    [Parameter]
+    public int radiobtnValue { get; set; } = 1;
     [Parameter]
     public EventCallback HideModal { get; set; }
     [Parameter]
     public List<Category>? categoryOptions { get; set; }
     [Parameter]
     public List<Location>? LocationOptions { get; set; }
-    int value = 1;
     public string? imagePath{ get; set; }
     public List<Listing> productList{ get; set; }
-    public int? userId{ get; set; }
-    public Listing product { get; set; } = new();
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
-        {
-            userId = Int32.Parse(user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value);
-        }
-
-    }
-
-
-    async Task SaveProduct()
-    {
-        product.UserID = userId;
-        product.Condition = value == 1 ? "Used" : "Fresh";
-        var result= await productService.AddProduct(product, imagePath);
-
-
-        if (result != null)
-        {
-            await HideModal.InvokeAsync(null);
-
-        }
-       
-    }
-    
+    [Parameter]
+    public EventCallback<string> ImagePathChanged { get; set; }
     private int progress { get; set; }
     private string info;
+
 
     void OnProgress(UploadProgressArgs args, string name)
     {
@@ -113,6 +91,11 @@
             var fileName = file.Name;
             var filePath = await uploadService.UploadImage(stream, fileName);
             imagePath = filePath;
+
+            if (ImagePathChanged.HasDelegate)
+            {
+                await ImagePathChanged.InvokeAsync(imagePath);
+            }
             // Optionally, handle the uploaded file path returned from the server
         }
     }

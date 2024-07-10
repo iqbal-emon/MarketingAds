@@ -30,12 +30,16 @@
                                 <RadzenFormField Text="Location:" Variant="Variant.Filled">
                                     <RadzenDropDown @bind-Value="updateProduct.LocationID" Data="@LocationOptions" TextProperty="LocationName" ValueProperty="LocationID" Style="width: 100%;" Required="true" />
                                 </RadzenFormField>
-                                   @*  <RadzenRadioButtonList @bind-Value=@value TValue="int" class="mb-5">
-                                        <Items>
-                                            <RadzenRadioButtonListItem Text="Used" Value="1" />
-                                            <RadzenRadioButtonListItem Text="New" Value="2" />
+
+                                <RadzenRadioButtonList @bind-Value=@updateProduct.Condition TValue="string" >
+                                        <Items> 
+                                        <RadzenRadioButtonListItem Text="Used" Value=@("Used") TValue="string" />
+                                        <RadzenRadioButtonListItem Text="New" Value=@("New") TValue="string" />
+
+                                          @*   <RadzenRadioButtonListItem Text="New" Value="2" /> *@
                                         </Items>
-                                    </RadzenRadioButtonList> *@
+                                    </RadzenRadioButtonList>
+
  
                                 <InputFile  OnChange="HandleFileUpload" />
 
@@ -70,6 +74,7 @@
     public EventCallback<string> ImagePathChanged { get; set; }
     public string imagePath{ get; set; }
     public Image image{ get; set; }
+    private int _conditionValue;
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,6 +83,7 @@
             image = await imageUploadService.GetImagePath(updateProduct?.ListingID ?? 0);
 
         }
+
     }
 
 
