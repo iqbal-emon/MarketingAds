@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MarketingAdsApi\MarketingAdsApi.csproj" />
     <ProjectReference Include="..\MarketingAdsLibrary\MarketingAdsLibrary.csproj" />
   </ItemGroup>
 

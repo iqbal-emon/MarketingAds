@@ -72,6 +72,11 @@ namespace MarketingAds.Data
                 .WithMany()
                 .HasForeignKey(l => l.CategoryID)
                 .OnDelete(DeleteBehavior.Restrict); // Example: No cascade delete on Category
+            modelBuilder.Entity<Listing>()
+               .HasOne(l => l.Location)
+               .WithMany()
+               .HasForeignKey(l => l.LocationID)
+               .OnDelete(DeleteBehavior.Restrict); // Example: No cascade delete on Category
 
             base.OnModelCreating(modelBuilder);
         }

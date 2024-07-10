@@ -69,8 +69,7 @@
     private async Task HandleLogIn()
     {
 
-       
-        user.UserRole = "Buyer";
+
         var NewUser =await authService.LogIn(user);
         if (NewUser!=null)
         {
@@ -78,7 +77,8 @@
             await AuthStateProvider.UpdateAuthenticationState(new UserSession
             {
                     Email = NewUser.Email,
-                    UserRole = NewUser.UserRole
+                    UserRole = NewUser.UserRole,
+                    UserId=NewUser.UserID
                 
             });
             NavigationManager.NavigateTo("/UserDetails",true);

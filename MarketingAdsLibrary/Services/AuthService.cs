@@ -27,16 +27,16 @@ namespace MarketingAdsLibrary.Services
             _context.SaveChanges();
         }
 
-        public async Task<User> LogIn(User User)
+        public async Task<User> LogIn(User newUser)
         {
 
-            var password = HashPassword(User.PasswordHash);
-            User.PasswordHash = password;
+            var password = HashPassword(newUser.PasswordHash);
+            newUser.PasswordHash = password;
 
 
             var user = await _context.Users.FirstOrDefaultAsync(u =>
-                    (u.Username == User.Username || u.Email == User.Email) &&
-                    u.PasswordHash == User.PasswordHash&& u.StatusId==1);
+                    (u.Username == newUser.Username || u.Username == newUser.Email) &&
+                    u.PasswordHash == newUser.PasswordHash&& u.StatusId==1);
 
             return user;
         }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MarketingAdsLibrary.Migrations
 {
-    public partial class StatusAdd : Migration
+    public partial class first : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -41,6 +41,25 @@ namespace MarketingAdsLibrary.Migrations
                         principalTable: "Status",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Locations",
+                columns: table => new
+                {
+                    LocationID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LocationName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StatusId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Locations", x => x.LocationID);
+                    table.ForeignKey(
+                        name: "FK_Locations_Status_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "Status",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -80,12 +99,13 @@ namespace MarketingAdsLibrary.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     CategoryID = table.Column<int>(type: "int", nullable: true),
+                    LocationID = table.Column<int>(type: "int", nullable: true),
                     UserID = table.Column<int>(type: "int", nullable: true),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Condition = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PostedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     StatusId = table.Column<int>(type: "int", nullable: true),
                     CategoryID1 = table.Column<int>(type: "int", nullable: true),
+                    LocationID1 = table.Column<int>(type: "int", nullable: true),
                     UserID1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -102,6 +122,17 @@ namespace MarketingAdsLibrary.Migrations
                         column: x => x.CategoryID1,
                         principalTable: "Categories",
                         principalColumn: "CategoryID");
+                    table.ForeignKey(
+                        name: "FK_Listings_Locations_LocationID",
+                        column: x => x.LocationID,
+                        principalTable: "Locations",
+                        principalColumn: "LocationID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Listings_Locations_LocationID1",
+                        column: x => x.LocationID1,
+                        principalTable: "Locations",
+                        principalColumn: "LocationID");
                     table.ForeignKey(
                         name: "FK_Listings_Status_StatusId",
                         column: x => x.StatusId,
@@ -287,6 +318,16 @@ namespace MarketingAdsLibrary.Migrations
                 column: "CategoryID1");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Listings_LocationID",
+                table: "Listings",
+                column: "LocationID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Listings_LocationID1",
+                table: "Listings",
+                column: "LocationID1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Listings_StatusId",
                 table: "Listings",
                 column: "StatusId");
@@ -300,6 +341,11 @@ namespace MarketingAdsLibrary.Migrations
                 name: "IX_Listings_UserID1",
                 table: "Listings",
                 column: "UserID1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Locations_StatusId",
+                table: "Locations",
+                column: "StatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_ListingID",
@@ -383,6 +429,9 @@ namespace MarketingAdsLibrary.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "Users");

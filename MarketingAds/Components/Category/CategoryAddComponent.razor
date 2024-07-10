@@ -1,4 +1,5 @@
 ﻿@using MarketingAds.Models;
+
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
@@ -18,6 +19,10 @@
                                 <RadzenFormField Text="Status:" Variant="Variant.Filled">
                                     <RadzenDropDown @bind-Value="category.StatusId" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Style="width: 100%;" Required="true" />
                                 </RadzenFormField>
+
+
+
+
 
                                 <RadzenButton Text="Submit" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
                             </RadzenStack>

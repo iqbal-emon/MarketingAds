@@ -5,7 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
-
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -37,6 +40,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
+
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
+
 builder.Services.AddTransient<Marketing>();
 builder.Services.AddTransient<StatusService>();
 builder.Services.AddTransient<CategoryService>();
@@ -44,6 +55,7 @@ builder.Services.AddTransient<LocationService>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddTransient<ProductService>();
+
 
 
 
@@ -56,6 +68,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseStaticFiles();
 }
+
 
 app.UseHttpsRedirection();
 

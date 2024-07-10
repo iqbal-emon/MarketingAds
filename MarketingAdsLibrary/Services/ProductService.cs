@@ -16,7 +16,7 @@ namespace MarketingAdsLibrary.Services
         private readonly Marketing _context;
 
 
-        public ProductService(Marketing context) // Modify constructor to inject IWebHostEnvironment
+        public ProductService(Marketing context)
         {
             _context = context;
             
@@ -24,28 +24,51 @@ namespace MarketingAdsLibrary.Services
 
         public async Task<List<Listing>> GetProduct()
         {
-            return await _context.Listings.Include(l => l.Images).ToListAsync();
+            return await _context.Listings.Include(l => l.Images).Include(l => l.Category)
+        .Include(l => l.Location).ToListAsync();
         }
-
-        public async Task<bool> AddProduct(Listing listing, IFormFile imageFile)
+         
+        public async Task<Listing?> AddProduct(Listing listing, string imagePath)
         {
-            if (listing.Images == null || !listing.Images.Any())
+
+            try
             {
-                var uploadsFolderPath = GenerateUploadsFolderPath(); // Generate dynamic folder path
-                listing.Images = new List<Image>
-        {
-            await SaveImageToServer(imageFile, uploadsFolderPath)
-        };
+                if (listing.Images == null || !listing.Images.Any())
+                {
+
+                    listing.Images = new List<Image>
+            {
+                  new Image { ImageURL = imagePath } 
+            };
+                }
+
+                _context.Listings.Add(listing);
+                await _context.SaveChangesAsync();
+
+                return listing;
             }
+            catch (Exception ex) {
+                return null;
+            }
+        }
+        public void DeleteImageFromServer(string imageName)
+        {
+            string uploadsFolderPath = GenerateUploadsFolderPath();
+            var imagePath = Path.Combine(uploadsFolderPath, imageName);
 
-            _context.Listings.Add(listing);
-            await _context.SaveChangesAsync();
-
-            return true;
+            if (File.Exists(imagePath))
+            {
+                File.Delete(imagePath);
+            }
+            else
+            {
+                throw new ArgumentException("Image not found or unable to delete.");
+            }
         }
 
-        private async Task<Image> SaveImageToServer(IFormFile imageFile, string uploadsFolderPath)
+        public async Task<string> SaveImageToServer(IFormFile imageFile)
         {
+            string uploadsFolderPath = GenerateUploadsFolderPath();
             if (imageFile != null && imageFile.Length > 0)
             {
                 if (!Directory.Exists(uploadsFolderPath))
@@ -62,8 +85,8 @@ namespace MarketingAdsLibrary.Services
                 }
 
                 // Return relative URL instead of local path
-                var relativePath = Path.Combine("uploads", imageName); // Example relative path
-                return new Image { ImageURL = relativePath };
+                var relativePath = Path.Combine("uploads", Path.GetFileName(uploadsFolderPath), imageName);
+                return relativePath;
             }
             else
             {
@@ -71,12 +94,17 @@ namespace MarketingAdsLibrary.Services
             }
         }
 
-        private string GenerateUploadsFolderPath()
+        public string GenerateUploadsFolderPath()
         {
-            // Generate a dynamic folder path based on current date, GUID, etc.
-            var uploadsFolderName = $"uploads_{DateTime.Now:yyyyMMdd}";
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "uploads", uploadsFolderName); // Example path, adjust as per your project structure
+            // Path to the uploads directory within wwwroot
+            var uploadsRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            // Generate a dynamic folder path based on the current date
+            var uploadsFolderName = DateTime.Now.ToString("yyyyMMdd");
+            return Path.Combine(uploadsRootPath, uploadsFolderName);
         }
+
+
+
 
 
         public async Task<bool> DeleteAsync(int productToDelete)
@@ -110,7 +138,7 @@ namespace MarketingAdsLibrary.Services
                 existingProduct.Description = updateProduct.Description;
                 existingProduct.Price = updateProduct.Price;
                 existingProduct.CategoryID = updateProduct.CategoryID;
-                existingProduct.Location = updateProduct.Location;
+                existingProduct.LocationID = updateProduct.LocationID;
                 existingProduct.Condition = updateProduct.Condition;
                 existingProduct.StatusId = updateProduct.StatusId;
                 _context.Listings.Update(existingProduct);

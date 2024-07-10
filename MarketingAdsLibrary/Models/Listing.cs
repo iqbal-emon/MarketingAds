@@ -11,18 +11,19 @@ namespace MarketingAds.Models
         public string? Description { get; set; }
         public decimal? Price { get; set; }
         public int? CategoryID { get; set; }
+        public int? LocationID {  get; set; }
         public int? UserID { get; set; }
-        public string? Location { get; set; }
         public string? Condition { get; set; }
         public DateTime? PostedDate { get; set; }
-        
-
+  
         [ForeignKey("CategoryID")]
         public Category?  Category { get; set; }
 
         [ForeignKey("UserID")]
         public User? User { get; set; }
 
+        [ForeignKey("LocationID")]
+        public Location? Location { get; set; }
         public ICollection<Image>? Images { get; set; }
         public ICollection<Review>? Reviews { get; set; }
         public ICollection<Message>? Messages { get; set; }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarketingAdsLibrary.Migrations
 {
     [DbContext(typeof(Marketing))]
-    [Migration("20240705093400_StatusAdd")]
-    partial class StatusAdd
+    [Migration("20240710065644_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -91,8 +91,11 @@ namespace MarketingAdsLibrary.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("LocationID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LocationID1")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("PostedDate")
                         .HasColumnType("datetime2");
@@ -118,6 +121,10 @@ namespace MarketingAdsLibrary.Migrations
 
                     b.HasIndex("CategoryID1");
 
+                    b.HasIndex("LocationID");
+
+                    b.HasIndex("LocationID1");
+
                     b.HasIndex("StatusId");
 
                     b.HasIndex("UserID");
@@ -125,6 +132,28 @@ namespace MarketingAdsLibrary.Migrations
                     b.HasIndex("UserID1");
 
                     b.ToTable("Listings");
+                });
+
+            modelBuilder.Entity("MarketingAds.Models.Location", b =>
+                {
+                    b.Property<int>("LocationID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LocationID"), 1L, 1);
+
+                    b.Property<string>("LocationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StatusId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LocationID");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("MarketingAds.Models.Message", b =>
@@ -347,6 +376,15 @@ namespace MarketingAdsLibrary.Migrations
                         .WithMany("Listings")
                         .HasForeignKey("CategoryID1");
 
+                    b.HasOne("MarketingAds.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MarketingAds.Models.Location", null)
+                        .WithMany("Listings")
+                        .HasForeignKey("LocationID1");
+
                     b.HasOne("MarketingAds.Models.Status", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId");
@@ -362,9 +400,20 @@ namespace MarketingAdsLibrary.Migrations
 
                     b.Navigation("Category");
 
+                    b.Navigation("Location");
+
                     b.Navigation("Status");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MarketingAds.Models.Location", b =>
+                {
+                    b.HasOne("MarketingAds.Models.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("MarketingAds.Models.Message", b =>
@@ -473,6 +522,11 @@ namespace MarketingAdsLibrary.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("MarketingAds.Models.Location", b =>
+                {
+                    b.Navigation("Listings");
                 });
 
             modelBuilder.Entity("MarketingAds.Models.User", b =>

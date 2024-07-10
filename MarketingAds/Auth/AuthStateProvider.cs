@@ -30,7 +30,8 @@ namespace MarketingAds.Auth
                 var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, userSession.Email),
-                new Claim(ClaimTypes.Role, userSession.UserRole)
+                new Claim(ClaimTypes.Role, userSession.UserRole),
+                  new Claim("UserId", userSession.UserId.ToString())
             };
 
                 var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "CustomAuth"));
@@ -54,7 +55,8 @@ namespace MarketingAds.Auth
                 var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, userSession.Email),
-                new Claim(ClaimTypes.Role, userSession.UserRole)
+                new Claim(ClaimTypes.Role, userSession.UserRole),
+                 new Claim("UserId", userSession.UserId.ToString())
             };
 
                 claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "CustomAuth"));

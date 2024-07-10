@@ -1,5 +1,120 @@
-﻿<h3>ProductAddComponent</h3>
+﻿@using MarketingAds.Models
+@using MarketingAdsLibrary.Services
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Http
+@inject ProductService productService
+@inject ImageUploadService uploadService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Add Product</h5>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="HideModal"></button>
+        </div>
+        <div class="modal-body">
+            <RadzenTemplateForm Data="@product" TItem="Listing" Submit="@SaveProduct">
+                <div class="rz-p-0 rz-p-md-12">
+                    <RadzenRow Gap="1rem">
+                        <RadzenColumn Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Product Name:" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="product.Title" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+                                <RadzenFormField Text="Product Description:" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="product.Description" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+                                <RadzenFormField Text="Product Price:" Variant="Variant.Filled">
+                                    <RadzenNumeric @bind-Value="product.Price" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+                                <RadzenFormField  Text="Category:" Variant="Variant.Filled">
+                                    <RadzenDropDown   @bind-Value="product.CategoryID" Data="@categoryOptions" TextProperty="CategoryName" ValueProperty="CategoryID" Style="width: 100%;" Required="true" />
+                                </RadzenFormField>
+                                <RadzenFormField Text="Location:" Variant="Variant.Filled">
+                                    <RadzenDropDown @bind-Value="product.LocationID" Data="@LocationOptions" TextProperty="LocationName" ValueProperty="LocationID" Style="width: 100%;" Required="true" />
+                                </RadzenFormField>
+                                    <RadzenRadioButtonList @bind-Value=@value TValue="int" class="mb-5">
+                                        <Items>
+                                            <RadzenRadioButtonListItem Text="Used" Value="1" />
+                                            <RadzenRadioButtonListItem Text="New" Value="2" />
+                                        </Items>
+                                    </RadzenRadioButtonList>
+ 
+                                <InputFile   OnChange="HandleFileUpload" />
+
+                                <RadzenFormField Text="Status:" Variant="Variant.Filled">
+                                    <RadzenDropDown @bind-Value="product.StatusId" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Style="width: 100%;" Required="true" />
+                                </RadzenFormField>
+                                <RadzenButton Text="Submit" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </div>
+            </RadzenTemplateForm>
+        </div>
+    </div>
+</div>
 
 @code {
+    [Parameter]
+    public List<Status> statusOptions { get; set; }
+    [Parameter]
+    public EventCallback HideModal { get; set; }
+    [Parameter]
+    public List<Category>? categoryOptions { get; set; }
+    [Parameter]
+    public List<Location>? LocationOptions { get; set; }
+    int value = 1;
+    public string? imagePath{ get; set; }
+    public List<Listing> productList{ get; set; }
+    public int? userId{ get; set; }
+    public Listing product { get; set; } = new();
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Int32.Parse(user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value);
+        }
+
+    }
+
+
+    async Task SaveProduct()
+    {
+        product.UserID = userId;
+        product.Condition = value == 1 ? "Used" : "Fresh";
+        var result= await productService.AddProduct(product, imagePath);
+
+
+        if (result != null)
+        {
+            await HideModal.InvokeAsync(null);
+
+        }
+       
+    }
+    
+    private int progress { get; set; }
+    private string info;
+
+    void OnProgress(UploadProgressArgs args, string name)
+    {
+        this.info = $"% '{name}' / {args.Loaded} of {args.Total} bytes.";
+        this.progress = args.Progress;
+    }
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        using (var stream = file.OpenReadStream())
+        {
+            var fileName = file.Name;
+            var filePath = await uploadService.UploadImage(stream, fileName);
+            imagePath = filePath;
+            // Optionally, handle the uploaded file path returned from the server
+        }
+    }
 
 }

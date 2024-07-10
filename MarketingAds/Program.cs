@@ -2,6 +2,7 @@ using Google.Api.Ads.Common.Lib;
 using MarketingAds.Auth;
 using MarketingAds.Components;
 using MarketingAds.Data;
+using Microsoft.AspNetCore.Components;
 
 using MarketingAdsLibrary.Services;
 using Microsoft.AspNetCore.Components;
@@ -31,12 +32,14 @@ builder.Services.AddTransient<CategoryService>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<LocationService>();
 builder.Services.AddTransient<ProductService>();
+builder.Services.AddScoped<ImageUploadService>();
 
 
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<ProtectedLocalStorage>();
-
+// Register HttpClient
+builder.Services.AddScoped(sp => new HttpClient {});
 
 builder.Services.AddAuthorizationCore();
 var app = builder.Build();

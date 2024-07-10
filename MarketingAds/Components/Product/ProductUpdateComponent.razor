@@ -1,5 +1,105 @@
-﻿<h3>ProductUpdateComponent</h3>
+﻿@using MarketingAds.Models;
+@using MarketingAdsLibrary.Services;
+@inject ImageUploadService imageUploadService
+@inject ProductService productService
 
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Update Category</h5>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="hideUpdate"></button>
+        </div>
+        <div class="modal-body">
+            <RadzenTemplateForm Data="@updateProduct" TItem="Listing" Submit="@UpdateProductBtn">
+                <div class="rz-p-0 rz-p-md-12">
+                    <RadzenRow Gap="1rem">
+                        <RadzenColumn Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Product Name:" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="updateProduct.Title" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+                                <RadzenFormField Text="Product Description:" Variant="Variant.Filled">
+                                    <RadzenTextBox @bind-Value="updateProduct.Description" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+                                <RadzenFormField Text="Product Price:" Variant="Variant.Filled">
+                                    <RadzenNumeric @bind-Value="updateProduct.Price" Required="true" Style="width: 100%;" />
+                                </RadzenFormField>
+                                <RadzenFormField  Text="Category:" Variant="Variant.Filled">
+                                    <RadzenDropDown @bind-Value="updateProduct.CategoryID" Data="@categoryOptions" TextProperty="CategoryName" ValueProperty="CategoryID" Style="width: 100%;" Required="true" />
+                                </RadzenFormField>
+                                <RadzenFormField Text="Location:" Variant="Variant.Filled">
+                                    <RadzenDropDown @bind-Value="updateProduct.LocationID" Data="@LocationOptions" TextProperty="LocationName" ValueProperty="LocationID" Style="width: 100%;" Required="true" />
+                                </RadzenFormField>
+                                   @*  <RadzenRadioButtonList @bind-Value=@value TValue="int" class="mb-5">
+                                        <Items>
+                                            <RadzenRadioButtonListItem Text="Used" Value="1" />
+                                            <RadzenRadioButtonListItem Text="New" Value="2" />
+                                        </Items>
+                                    </RadzenRadioButtonList> *@
+ 
+                                <InputFile  OnChange="HandleFileUpload" />
+
+                                <RadzenFormField Text="Status:" Variant="Variant.Filled">
+                                    <RadzenDropDown @bind-Value="updateProduct.StatusId" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Style="width: 100%;" Required="true" />
+                                </RadzenFormField>
+                                <RadzenButton Text="Submit" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </div>
+            </RadzenTemplateForm>
+        </div>
+
+
+    </div>
+</div>
 @code {
+    [Parameter]
+    public Listing? updateProduct { get; set; }
+    [Parameter]
+    public EventCallback UpdateProductBtn { get; set; }
+    [Parameter]
+    public EventCallback hideUpdate { get; set; }
+    [Parameter]
+    public List<Status> statusOptions { get; set; }
+    [Parameter]
+    public List<Category>? categoryOptions { get; set; }
+    [Parameter]
+    public List<Location>? LocationOptions { get; set; }
+    [Parameter]
+    public EventCallback<string> ImagePathChanged { get; set; }
+    public string imagePath{ get; set; }
+    public Image image{ get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (updateProduct?.ListingID!=null){
+
+            image = await imageUploadService.GetImagePath(updateProduct?.ListingID ?? 0);
+
+        }
+    }
+
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        // image = await imageUploadService.GetImagePath(updateProduct?.ListingID ?? 0);
+        // if (updateProduct?.ListingID!=null)
+        // {
+        //      productService.DeleteImageFromServer(image.ImageURL);
+        // }
+        var file = e.File;
+
+        using (var stream = file.OpenReadStream())
+        {
+            var fileName = file.Name;
+            var filePath = await imageUploadService.UploadImage(stream, fileName);
+            imagePath = filePath;
+            if (ImagePathChanged.HasDelegate)
+            {
+                await ImagePathChanged.InvokeAsync(imagePath);
+            }
+
+        }
+    }
 }

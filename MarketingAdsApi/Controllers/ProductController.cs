@@ -36,7 +36,7 @@ namespace MarketingAdsApi.Controllers
 
         [HttpPost("AddProduct")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddProduct(string Title, string Description, decimal Price, int CategoryID, int UserID, string Location, string conditon, IFormFile imageFile)
+        public async Task<IActionResult> AddProduct(string Title, string Description, decimal Price, int CategoryID, int UserID, int LocationID, string conditon, string imagePath)
         {
             Listing listing = new Listing();
             listing.Title= Title;
@@ -44,17 +44,38 @@ namespace MarketingAdsApi.Controllers
             listing.Price= Price;
             listing.CategoryID= CategoryID;
             listing.UserID= UserID;
-            listing.Location= Location;
+            listing.LocationID= LocationID;
             listing.Condition = conditon;
-            bool productSuccess = await _productService.AddProduct(listing, imageFile);
-            if (productSuccess)
+            Listing? productSuccess = await _productService.AddProduct(listing, imagePath);
+            if (productSuccess!=null)
             {
-                return Ok("Succesful");
+                return Ok(productSuccess);
             }
             else
             {
                 return BadRequest("Not Succesful");
             }
         }
+
+        [HttpPost("single")]
+        public async Task<IActionResult> UploadSingleFile(IFormFile file)
+        {
+            // Check if file is null
+            if (file == null || file.Length == 0)
+                return BadRequest("File not selected or empty.");
+
+            // Process the file (e.g., save it to a specific location)
+            var filePath = Path.Combine("wwwroot", "uploads", file.FileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Optionally, return a response or additional data
+            return Ok(new { filePath });
+        }
+
+
     }
 }
