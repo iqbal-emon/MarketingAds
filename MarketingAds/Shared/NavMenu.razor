@@ -6,7 +6,7 @@
 @inject IJSRuntime js
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">MarketingAds</a>
+        <a class="navbar-brand" href="/">MarketingAds</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -18,27 +18,27 @@
         <Authorized>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="Status" Match="NavLinkMatch.Prefix">
-                    <span class="oi oi-home" aria-hidden="true"></span> Status
+                    <span class="oi oi-circle-check" aria-hidden="true"></span> Status
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="Category" Match="NavLinkMatch.Prefix">
-                    <span class="oi oi-home" aria-hidden="true"></span> Category
+                    <span class="oi oi-tags" aria-hidden="true"></span> Category
                 </NavLink>
             </div>
          <div class="nav-item px-3">
                 <NavLink class="nav-link" href="User" Match="NavLinkMatch.Prefix">
-                    <span class="oi oi-home" aria-hidden="true"></span> User
+                    <span class="oi oi-person" aria-hidden="true"></span> User
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="Location" Match="NavLinkMatch.Prefix">
-                    <span class="oi oi-home" aria-hidden="true"></span> Location
+                    <span class="oi oi-map-marker" aria-hidden="true"></span> Location
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="Product" Match="NavLinkMatch.Prefix">
-                    <span class="oi oi-home" aria-hidden="true"></span> Product
+                    <span class="oi oi-box" aria-hidden="true"></span> Product
                 </NavLink>
             </div>
             <div class="nav-item px-3">
@@ -55,34 +55,22 @@
     
 
 
-          <AuthorizeView Roles="buyer">
+          <AuthorizeView Roles="Buyer">
             <Authorized>
     <nav class="flex-column">
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="UserDetails">
-                        <span class="oi oi-plus" aria-hidden="true"></span> UserDeails
-            </NavLink>
-
-        </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="AnotherComponentComponent">
-                        <span class="oi oi-plus" aria-hidden="true"></span> AnotherComponentComponent
-                    </NavLink>
-
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link">
-                        <button class="btn btn-danger" @onclick="Logout">Log out</button>
+                    <NavLink class="nav-link" href="Product" Match="NavLinkMatch.Prefix">
+                        <span class="oi oi-box" aria-hidden="true"></span> Product
                     </NavLink>
                 </div>
        
     </nav>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link">
+                    <button class="btn btn-danger" @onclick="Logout">Log out</button>
+                </NavLink>
+            </div>
             </Authorized>
         </AuthorizeView>
 
@@ -101,6 +89,9 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+
+
     private async Task Logout()
     {
 

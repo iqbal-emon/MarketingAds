@@ -1,8 +1,9 @@
 ﻿@page "/Product"
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Roles = "Admin, Buyer")]
 @using MarketingAds.Models;
 @using MarketingAds.Components.Product;
 @using MarketingAdsLibrary.Services;
+@using System.Security.Claims
 @inject ProductService productService
 @inject DialogService DialogService
 @inject StatusService statusService
@@ -95,22 +96,35 @@ else
     private List<Location> LocationOptions = new List<Location>();
     private string imagePath;
     public int? userId { get; set; }
+    public string? userRole { get; set; }
+
     public int radiobtnValue { get; set; } = 1;
     public bool load = false;
     public IFormFile uploadImage;
     IList<Listing> selectedStatus;
     protected override async Task OnInitializedAsync()
     {
-        productList = await productService.GetProduct();
-        load = true;
-        selectedStatus = new List<Listing>() { productList.FirstOrDefault() };
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         if (user.Identity.IsAuthenticated)
         {
             userId = Int32.Parse(user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value);
+            userRole = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
         }
+        if (userRole == "Admin")
+        {
+            productList = await productService.GetProduct();
+
+        }
+        else if (userRole == "Buyer")
+        {
+            productList = await productService.GetProduct();
+            productList = productList.Where(p => p.UserID == userId).ToList();
+        }
+        load = true;
+        selectedStatus = new List<Listing>() { productList.FirstOrDefault() };
     }
     private async Task HandleImagePathChanged(string newPath)
     {
@@ -203,7 +217,16 @@ else
         product.UserID = userId;
         product.Condition = product.Condition;
         var result = await productService.AddProduct(product, imagePath);
-        productList = await productService.GetProduct();
+        if (userRole == "Admin")
+        {
+            productList = await productService.GetProduct();
+
+        }
+        else if (userRole == "Buyer")
+        {
+            productList = await productService.GetProduct();
+            productList = productList.Where(p => p.UserID == userId).ToList();
+        }
         await InvokeAsync(StateHasChanged);
         showModal = false;
         radiobtnValue = 1;
@@ -236,7 +259,16 @@ else
         image.ImageURL = imagePath;
         await imageUpload.UpdateImage(image);
         await productService.UpdateProduct(productUpdate);
-        productList = await productService.GetProduct();
+        if (userRole == "Admin")
+        {
+            productList = await productService.GetProduct();
+
+        }
+        else if (userRole == "Buyer")
+        {
+            productList = await productService.GetProduct();
+            productList = productList.Where(p => p.UserID == userId).ToList();
+        }
         await InvokeAsync(StateHasChanged);
         EditModal = false;
 

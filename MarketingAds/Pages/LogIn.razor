@@ -9,52 +9,53 @@
 @inject  AuthService authService;
 @inject AuthStateProvider AuthStateProvider
 @page "/Login"
-<div class="container col-8 mt-5">
-    <div class="d-flex justify-content-center" style="border-radius: 20px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
-        <div class="col-6">
-            <img src="./Image/Login.jpg" class="img-fluid" alt="Login Image">
-        </div>
-        <div class="col-6" style="margin-top:5%;">
-            <div class="mt-6">
-                <h1 class="text-center mb-4">Log In</h1>
-                <div style="margin-left:30%">
-                <RadzenTemplateForm TItem="User" Data=@user Submit=@HandleLogIn>
-                    <RadzenRow Gap="2rem">
-                        <RadzenColumn Size="8">
-                            <RadzenStack>
-                                <RadzenFormField Text="Username" Variant="@variant">
-                                    <ChildContent>
-                                        <RadzenTextBox Name="Username" @bind-Value="user.Username" />
-                                    </ChildContent>
-                                    <Helper>
-                                        <RadzenRequiredValidator Component="Username" Text="Username is required." />
-                                    </Helper>
-                                </RadzenFormField>
-                                <RadzenFormField Text="Password" Variant="@variant">
-                                    <ChildContent>
-                                        <RadzenPassword Name="Password" @bind-Value="user.PasswordHash" />
-                                    </ChildContent>
-                                    <Helper>
-                                        <RadzenRequiredValidator Component="Password" Text="Password is required." />
-                                    </Helper>
-                                </RadzenFormField>
-                                <div class="text-center">
-                                    <RadzenButton ButtonType="ButtonType.Submit" Text="Login"></RadzenButton>
-                                </div>
-
-                            </RadzenStack>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenTemplateForm>
-                                
-                 
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+    <div class="col-md-8 col-lg-6 shadow-lg rounded">
+        <div class="row">
+            <div class="col-md-6 mb-3 mb-md-0 d-flex align-items-center justify-content-center">
+                <img src="./Image/Login.jpg" class="img-fluid" alt="Login Image">
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <div>
+                    <h1 class="text-center mb-4">Log In</h1>
+                    <RadzenTemplateForm TItem="User" Data=@user Submit=@HandleLogIn>
+                        <RadzenRow Gap="1rem">
+                            <RadzenColumn Size="12">
+                                <RadzenStack>
+                                    @if (visible)
+                                    {
+                                        <RadzenAlert AlertStyle="AlertStyle.Danger" ShowIcon="false" Variant="Variant.Flat" Shade="Shade.Lighter">
+                                            Incorrect Information
+                                        </RadzenAlert>
+                                    }
+                                    <RadzenFormField Text="Username">
+                                        <ChildContent>
+                                            <RadzenTextBox Name="Username" @bind-Value="user.Username" />
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Component="Username" Text="Username is required." />
+                                        </Helper>
+                                    </RadzenFormField>
+                                    <RadzenFormField Text="Password">
+                                        <ChildContent>
+                                            <RadzenPassword Name="Password" @bind-Value="user.PasswordHash" />
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Component="Password" Text="Password is required." />
+                                        </Helper>
+                                    </RadzenFormField>
+                                    <div class="text-center">
+                                        <RadzenButton ButtonType="ButtonType.Submit" Text="Login"></RadzenButton>
+                                    </div>
+                                </RadzenStack>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenTemplateForm>
+                    <div class="text-center mt-3">
+                        <a href="/CreateAccount">Sign Up</a>
+                    </div>
                 </div>
-
             </div>
-            <div class="text-center " style="margin-left:30px;margin-top:5px;">
-                <a href="/CreateAccount">Sign Up</a>
-            </div>
-
         </div>
     </div>
 </div>
@@ -63,29 +64,42 @@
 
 
 
+
+
+
 @code {
     Variant variant = Variant.Outlined;
     private User user = new User();
+    bool visible = false;
     private async Task HandleLogIn()
     {
 
 
-        var NewUser =await authService.LogIn(user);
-        if (NewUser!=null)
+        var loginUser =await authService.LogIn(user);
+        if (loginUser != null)
         {
-         
+
             await AuthStateProvider.UpdateAuthenticationState(new UserSession
             {
-                    Email = NewUser.Email,
-                    UserRole = NewUser.UserRole,
-                    UserId=NewUser.UserID
-                
+                    Email = loginUser.Email,
+                    UserRole = loginUser.UserRole,
+                    UserId = loginUser.UserID
+
             });
-            NavigationManager.NavigateTo("/UserDetails",true);
+            if (loginUser.UserRole == "Admin")
+            {
+                NavigationManager.NavigateTo("/Status", true);
+
+            }
+            else if (loginUser.UserRole == "Buyer")
+            {
+                NavigationManager.NavigateTo("/product", true);
+
+            }
         }
         else
         {
-            await JSRuntime.InvokeVoidAsync("alert", "Wrong Credential");
+            visible =true;
 
         }
 
