@@ -19,10 +19,11 @@ namespace MarketingAdsLibrary.Services
         }
         public async Task<List<Category>> GetCategory()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories.Include(c=>c.Listings).ToListAsync();
         }
         public async Task <Category>AddCategory(Category category)
         {
+           
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
             return category;
