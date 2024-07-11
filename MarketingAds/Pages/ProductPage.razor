@@ -20,9 +20,9 @@
             @* <button class="btn btn-primary" @onclick="showModel">Add House</button> *@
             <RadzenButton Text="Add Product" Click="showModel" />
         </div>
-        <div style="height:400px; overflow: scroll">
+
             <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="12" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                            Data="@productList" ColumnWidth="200px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
+                            Data="@productList"  LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
                         
                         
                         <Columns>
@@ -46,7 +46,7 @@
 
 
 
-                <RadzenDataGridColumn Title="Action" Width="100px" Filterable="false">
+                <RadzenDataGridColumn Title="Action" Width="200px" Filterable="false">
                     <Template Context="product">
                         @if (product.StatusId == 3)
                         {
@@ -65,7 +65,7 @@
         </RadzenDataGrid>
         </div>
 
-    </div>
+
     <div class="modal px-5" tabindex="-1" style="@ModalStyle">
         <ProductAddComponent radiobtnValue="radiobtnValue" LocationOptions="LocationOptions" product="product" SaveProduct="SaveProduct" HideModal="HideModal" ImagePathChanged="HandleImagePathChanged" statusOptions="statusOptions" categoryOptions="categoryOptions" />
 </div>

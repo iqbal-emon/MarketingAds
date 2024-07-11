@@ -14,18 +14,28 @@
                         <RadzenColumn Size="12">
                             <RadzenStack>
                                 <RadzenFormField Text="Category Name:" Variant="Variant.Filled">
-                                    <RadzenTextBox @bind-Value="updateCategory.CategoryName" Required="true" Style="width: 100%;" />
+                                    <ChildContent>
+                                        <RadzenTextBox @bind-Value="updateCategory.CategoryName" Name="CategoryName"  Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="CategoryName" Text="Category name is required." />
+                                    </Helper>
                                 </RadzenFormField>
 
                                 <RadzenFormField Text="Status:" Variant="Variant.Filled">
-                                    <RadzenDropDown @bind-Value="updateCategory.StatusId" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Style="width: 100%;" Required="true" />
+                                    <ChildContent>
+                                        <RadzenDropDown @bind-Value="updateCategory.StatusId" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Name="StatusId" Style="width: 100%;" Required="true" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="StatusId" Text="Status is required." />
+                                    </Helper>
                                 </RadzenFormField>
 
-
-                                <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
+                                <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Primary"  />
                             </RadzenStack>
                         </RadzenColumn>
                     </RadzenRow>
+
                 </div>
             </RadzenTemplateForm>
         </div>

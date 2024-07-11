@@ -16,40 +16,70 @@
                         <RadzenColumn Size="12">
                             <RadzenStack>
                                 <RadzenFormField Text="Product Name:" Variant="Variant.Filled">
-                                    <RadzenTextBox @bind-Value="updateProduct.Title" Required="true" Style="width: 100%;" />
+                                    <ChildContent>
+                                        <RadzenTextBox @bind-Value="updateProduct.Title" Name="ProductName" Required="true" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="ProductName" Text="Product name is required." />
+                                    </Helper>
                                 </RadzenFormField>
                                 <RadzenFormField Text="Product Description:" Variant="Variant.Filled">
-                                    <RadzenTextBox @bind-Value="updateProduct.Description" Required="true" Style="width: 100%;" />
+                                    <ChildContent>
+                                        <RadzenTextBox @bind-Value="updateProduct.Description" Name="ProductDescription" Required="true" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="ProductDescription" Text="Product description is required." />
+                                    </Helper>
                                 </RadzenFormField>
                                 <RadzenFormField Text="Product Price:" Variant="Variant.Filled">
-                                    <RadzenNumeric @bind-Value="updateProduct.Price" Required="true" Style="width: 100%;" />
+                                    <ChildContent>
+                                        <RadzenNumeric @bind-Value="updateProduct.Price" Name="ProductPrice" Required="true" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="ProductPrice" Text="Product price is required." />
+                                    </Helper>
                                 </RadzenFormField>
-                                <RadzenFormField  Text="Category:" Variant="Variant.Filled">
-                                    <RadzenDropDown @bind-Value="updateProduct.CategoryID" Data="@categoryOptions" TextProperty="CategoryName" ValueProperty="CategoryID" Style="width: 100%;" Required="true" />
+                                <RadzenFormField Text="Category:" Variant="Variant.Filled">
+                                    <ChildContent>
+                                        <RadzenDropDown @bind-Value="updateProduct.CategoryID" Data="@categoryOptions" TextProperty="CategoryName" ValueProperty="CategoryID" Name="CategoryID" Style="width: 100%;" Required="true" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="CategoryID" Text="Category is required." />
+                                    </Helper>
                                 </RadzenFormField>
                                 <RadzenFormField Text="Location:" Variant="Variant.Filled">
-                                    <RadzenDropDown @bind-Value="updateProduct.LocationID" Data="@LocationOptions" TextProperty="LocationName" ValueProperty="LocationID" Style="width: 100%;" Required="true" />
+                                    <ChildContent>
+                                        <RadzenDropDown @bind-Value="updateProduct.LocationID" Data="@LocationOptions" TextProperty="LocationName" ValueProperty="LocationID" Name="LocationID" Style="width: 100%;" Required="true" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="LocationID" Text="Location is required." />
+                                    </Helper>
                                 </RadzenFormField>
 
-                                <RadzenRadioButtonList @bind-Value=@updateProduct.Condition TValue="string" >
-                                        <Items> 
+                                <RadzenRadioButtonList @bind-Value=@updateProduct.Condition TValue="string">
+                                    <Items>
                                         <RadzenRadioButtonListItem Text="Used" Value=@("Used") TValue="string" />
                                         <RadzenRadioButtonListItem Text="New" Value=@("New") TValue="string" />
 
-                                          @*   <RadzenRadioButtonListItem Text="New" Value="2" /> *@
-                                        </Items>
-                                    </RadzenRadioButtonList>
+                                        @*   <RadzenRadioButtonListItem Text="New" Value="2" /> *@
+                                    </Items>
+                                </RadzenRadioButtonList>
 
- 
-                                <InputFile  OnChange="HandleFileUpload" />
+                                <InputFile OnChange="HandleFileUpload" />
 
                                 <RadzenFormField Text="Status:" Variant="Variant.Filled">
-                                    <RadzenDropDown @bind-Value="updateProduct.StatusId" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Style="width: 100%;" Required="true" />
+                                    <ChildContent>
+                                        <RadzenDropDown @bind-Value="updateProduct.StatusId" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Name="StatusId" Style="width: 100%;" Required="true" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="StatusId" Text="Status is required." />
+                                    </Helper>
                                 </RadzenFormField>
-                                <RadzenButton Text="Submit" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
+                                <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Primary" Type="Submit" />
                             </RadzenStack>
                         </RadzenColumn>
                     </RadzenRow>
+
                 </div>
             </RadzenTemplateForm>
         </div>

@@ -12,16 +12,27 @@
                         <RadzenColumn Size="12">
                             <RadzenStack>
                                 <RadzenFormField Text="Status Name:" Variant="Variant.Filled">
-                                    <RadzenTextBox @bind-Value="status.Name" Required="true" Style="width: 100%;" />
+                                    <ChildContent>
+                                        <RadzenTextBox @bind-Value="status.Name" Name="Name" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="Name" Text="Status name is required." />
+                                    </Helper>
                                 </RadzenFormField>
 
                                 <RadzenFormField Text="Status ShortForm" Variant="Variant.Filled">
-                                    <RadzenTextBox @bind-Value="status.ShorForm" Required="true" Style="width: 100%;" />
+                                    <ChildContent>
+                                        <RadzenTextBox @bind-Value="status.ShorForm" Name="ShortForm" Style="width: 100%;"  />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="ShortForm" Text="Status short form is required." />
+                                    </Helper>
                                 </RadzenFormField>
 
-                                <RadzenButton Text="Submit" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
+                                <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Primary" Type="Submit" />
                             </RadzenStack>
                         </RadzenColumn>
+
                     </RadzenRow>
                 </div>
             </RadzenTemplateForm>

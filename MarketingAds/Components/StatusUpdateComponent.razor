@@ -14,18 +14,28 @@
                         <RadzenColumn Size="12">
                             <RadzenStack>
                                 <RadzenFormField Text="Status Name:" Variant="Variant.Filled">
-                                    <RadzenTextBox @bind-Value="updateStatus.Name" Required="true" Style="width: 100%;" />
+                                    <ChildContent>
+                                        <RadzenTextBox @bind-Value="updateStatus.Name" Name="Name" Required="true" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="Name" Text="Status Name is required." />
+                                    </Helper>
                                 </RadzenFormField>
 
                                 <RadzenFormField Text="Status ShortForm:" Variant="Variant.Filled">
-                                    <RadzenTextBox @bind-Value="updateStatus.ShorForm" Required="true" Style="width: 100%;" />
+                                    <ChildContent>
+                                        <RadzenTextBox @bind-Value="updateStatus.ShorForm" Name="ShortForm"  Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="ShortForm" Text="Status Short form is required." />
+                                    </Helper>
                                 </RadzenFormField>
 
-                           
-                                <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Primary" Type="Submit" Class="mt-3" />
+                                <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Primary" Type="Submit" />
                             </RadzenStack>
                         </RadzenColumn>
                     </RadzenRow>
+
                 </div>
             </RadzenTemplateForm>
         </div>

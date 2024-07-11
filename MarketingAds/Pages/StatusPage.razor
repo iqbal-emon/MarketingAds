@@ -17,7 +17,7 @@
             <RadzenButton Text="Add Status"  Click="showModel" />
         </div>
         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="12" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                        Data="@statuss" ColumnWidth="200px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
+                        Data="@statuss" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStatus>
             <Columns>
                 <RadzenDataGridColumn Property="Id" Filterable="false" Title="ID" Width="80px" TextAlign="TextAlign.Center" />
                 <RadzenDataGridColumn Property="Name" Title="Name" Width="160px" />
