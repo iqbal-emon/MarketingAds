@@ -2,33 +2,33 @@
 @using MarketingAdsLibrary.Services;
 @inject CategoryService categoryService;
 @using MarketingAds.Models
+@inject NavigationManager navgiationManager
 
  <div class="text-center">
        <h2>All Category</h2>
   </div>
-<div class="container mt-5 ">
-    @if (categories != null && categories.Any())
-    {
-        @for (int i = 0; i < categories.Count; i += 4)
+<div class="container mt-5">
+    <div class="row align-items-start">
+        @if (categories != null && categories.Any())
         {
-            <div class="row  justify-content-center">
-                @for (int j = i; j < Math.Min(i + 4, categories.Count); j++)
-                {
-                    <div class="col-md-3 ">
-                        <div class="card border rounded mb-4">
-                            <img src="./css/open-iconic/image/iphone.jpg" class="card-img-top" alt="Category Image" style="height: 200px;">
-                            <div class="card-body">
-                                <h5 class="card-title">@categories[j].CategoryName</h5>
-                                <p class="card-text">@categories[j]?.Listings?.Count() Listings</p>
-                                <a href="#" class="btn btn-primary">View Listings</a>
-                            </div>
+            @foreach (var category in categories)
+            {
+                <div class="col-md-3">
+                    <div class="card border rounded mb-4">
+                        <img src="./css/open-iconic/Image/iphone.jpg" class="card-img-top" alt="Category Image" style="height: 200px;">
+                        <div class="card-body">
+                            <h5 class="card-title">@category.CategoryName</h5>
+                            <p class="card-text">@category?.ListingCount Listings</p>
+                            <a class="btn btn-primary" @onclick="@( () => navgiationManager.NavigateTo($"/listing/{category?.CategoryID}") )">View Listings</a>
                         </div>
                     </div>
-                }
-            </div>
+                </div>
+            }
         }
-    }
+    </div>
 </div>
+
+
 
 
 
@@ -38,10 +38,10 @@
     
 
 @code {
-    List<Category> categories;
+    List<CategoryListingSummary> categories;
     protected override async Task OnInitializedAsync()
     {
-        categories = await categoryService.GetCategory();
+        categories = await categoryService.GetListingBasedCategoryCount();
 
     }
 

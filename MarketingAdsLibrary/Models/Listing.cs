@@ -17,7 +17,7 @@ namespace MarketingAds.Models
         public DateTime? PostedDate { get; set; }
   
         [ForeignKey("CategoryID")]
-        public Category?  Category { get; set; }
+        public Category? Category { get; set; }
 
         [ForeignKey("UserID")]
         public User? User { get; set; }

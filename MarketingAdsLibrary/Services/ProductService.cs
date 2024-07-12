@@ -27,7 +27,20 @@ namespace MarketingAdsLibrary.Services
             return await _context.Listings.Include(l => l.Images).Include(l => l.Category)
         .Include(l => l.Location).ToListAsync();
         }
-         
+
+
+        public async Task<Listing> GetProductDetails(int ListingId)
+        {
+            return await _context.Listings
+                .Include(l => l.Images)
+                .Include(l => l.Category)
+                .Include(l => l.Location).
+                Include(l=>l.User)
+                .FirstOrDefaultAsync(l => l.ListingID == ListingId);
+        }
+
+
+
         public async Task<Listing?> AddProduct(Listing listing, string imagePath)
         {
 

@@ -1,0 +1,100 @@
+﻿@page "/product/details/{ListingID}"
+@using MarketingAds.Models;
+@using MarketingAdsLibrary.Services;
+@inject ProductService productService;
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 id="product-title">@product?.Title</h1>
+            <div class="d-flex align-items-center mb-2">
+                <div class="d-flex">
+                    <div >
+                        <span class="oi oi-tags mr-2"></span>
+                    </div>
+                    <div style="margin-left:5px;">
+                        @product?.Category?.CategoryName
+                    </div>
+                </div>
+
+                <span class="text-muted">Jul 11, 2024 02:59 PM</span>
+            </div>
+            <div id="product-carousel" class="carousel slide mb-3" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                    @if (product?.Images != null && product.Images.Any())
+                    {
+                        <img src="https://localhost:7235\@product.Images.FirstOrDefault()?.ImageURL" class="d-block w-100" alt="Product Image">
+                    } 
+                    </div>
+
+               
+
+
+
+                </div>
+            
+
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="seller-info mb-3 " style="margin-top:150px;margin-left:50px;">
+                <h3 class="fw-bold" style="color:red">@product?.Price</h3>
+                <p>@product?.User?.Phone</p>
+                <button type="button" class="btn btn-primary btn-block mb-2 w-25">Call</button>
+              @*   <div class="d-flex align-items-center mb-2">
+                    <img src="https://via.placeholder.com/50" alt="Seller">
+                    <div class="ml-2">
+                        <div class="name">John Doe</div>
+                        <div class="location">Seller</div>
+                    </div>
+                </div> *@
+                @* <button type="button" class="btn btn-link btn-block">Report Listing</button> *@
+            <div class="seller-info">
+                <h5>Location:</h5>
+                <p>@product?.Location?.LocationName</p>
+            </div>
+            </div>
+           @*  <div class="warning mb-3">
+                Never prepay for deliveries. Physically inspect goods and sellers before payment. Templatecookie connects buyers and sellers, not responsible for transactions.
+            </div> *@
+            <div class="container mt-3 w-100">
+                <div class="row">
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Product Details</h5>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <strong>Condition:</strong> @product?.Condition
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Description:</strong><br>
+                                    @product?.Description
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+
+
+ [Parameter]
+    public string? ListingID { get; set; }
+  Listing? product;
+    public int ConvertedListingID { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ConvertedListingID = Int32.Parse(ListingID);
+        product = await productService.GetProductDetails(ConvertedListingID);
+    }
+
+}

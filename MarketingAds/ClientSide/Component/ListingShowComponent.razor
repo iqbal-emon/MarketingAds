@@ -1,0 +1,89 @@
+﻿@page "/listing/{CategoryID}"
+@using MarketingAds.Models;
+@using MarketingAdsLibrary.Services;
+@inject CategoryService categoryService;
+<div class="container mt-5">
+    <div class="row align-items-start">
+@if (listings != null && listings.Any())
+{
+    @foreach (var product in listings)
+    {
+        <div class="container mt-3 " style="width:260px;" >
+                    <a style="text-decoration: none;" href="/product/details/@product.ListingID">
+            <div class="card" id="custom-card">
+                <div>
+                            @if (product.Images != null && product.Images.Any())
+                            {
+                                <img src="https://localhost:7235\@product.Images.FirstOrDefault()?.ImageURL" class="card-img-top" alt="Category Image" style="height: 200px;">
+                            }
+
+                </div>
+
+                <div class="card-body " id="custom-card-body" >
+                    <p id="price">@product.Price</p>
+                    <h5 class="card-title">@product.Title</h5>
+                            <p id="location"> <span class="oi oi-map-marker" aria-hidden="true"></span> @product?.Location?.LocationName</p>
+                    <p id="category"> <span class="oi oi-tags" aria-hidden="true"></span>@product?.Category?.CategoryName</p>
+                            <p id="time">
+                                @{
+                                    if (product?.PostedDate != null)
+                                    {
+                                        var timeDifference = DateTime.Now - product.PostedDate.Value ;
+
+                                        if (timeDifference.TotalSeconds < 60)
+                                        {
+                                            @($"{(int)timeDifference.TotalSeconds} seconds ago");
+                                        }
+                                        else if (timeDifference.TotalMinutes < 60)
+                                        {
+                                            @($"{(int)timeDifference.TotalMinutes} minutes ago");
+                                        }
+                                        else if (timeDifference.TotalHours < 24)
+                                        {
+                                            @($"{(int)timeDifference.TotalHours} hours ago")
+                                            ;
+                                        }
+                                        else if (timeDifference.TotalDays < 30)
+                                        {
+                                            @($"{(int)timeDifference.TotalDays} days ago");
+                                        }
+                                        else if (timeDifference.TotalDays < 365)
+                                        {
+                                            var months = (int)(timeDifference.TotalDays / 30);
+                                            @($"{months} {(months == 1 ? "month" : "months")} ago");
+                                        }
+                                        else
+                                        {
+                                            var years = (int)(timeDifference.TotalDays / 365);
+                                            @($"{years} {(years == 1 ? "year" : "years")} ago");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @("")
+                                        ;
+                                    }
+                                }
+                            </p>
+
+
+                        </div>
+            </div>
+        </a>
+        </div>
+    }
+}
+    </div>
+</div>
+@code {
+    [Parameter]
+    public string? CategoryID { get; set; }
+    List<Listing>? listings;
+    public int ConvertedCategoryID{ get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ConvertedCategoryID = Int32.Parse(CategoryID);
+        listings = await categoryService.GetListingBasedCategory(ConvertedCategoryID);
+    }
+}

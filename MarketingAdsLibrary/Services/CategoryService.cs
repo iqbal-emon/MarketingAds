@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,36 @@ namespace MarketingAdsLibrary.Services
         {
             return await _context.Categories.Include(c=>c.Listings).ToListAsync();
         }
+        public async Task<List<CategoryListingSummary>> GetListingBasedCategoryCount()
+        {
+            var query = from l in _context.Listings
+                        join c in _context.Categories on l.CategoryID equals c.CategoryID into categoryGroup
+                        from cg in categoryGroup.DefaultIfEmpty()
+                        group l by new { l.CategoryID, cg.CategoryName } into g
+                        select new CategoryListingSummary
+                        {
+                            CategoryID = (int)g.Key.CategoryID,
+                            CategoryName = g.Key.CategoryName,
+                            ListingCount = g.Count()
+                        };
+
+            var result = await query.ToListAsync();
+
+            return result;
+        }
+        public async Task<List<Listing>> GetListingBasedCategory(int CategoryId)
+        {
+            return await _context.Listings.Where(l => l.CategoryID == CategoryId).Include(l=>l.Category).Include(l=>l.Location).Include(l=>l.Images).ToListAsync();
+                
+  }
+
+
+
+
+
+
+
+
         public async Task <Category>AddCategory(Category category)
         {
            

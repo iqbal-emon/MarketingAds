@@ -1,0 +1,185 @@
+﻿@page "/Add-Product"
+@attribute [Authorize(Roles ="Buyer")]
+@using MarketingAds.Models;
+@using MarketingAds.Components.Product;
+@using MarketingAdsLibrary.Services;
+@using System.Security.Claims
+@inject ProductService productService
+@inject DialogService DialogService
+@inject StatusService statusService
+@inject CategoryService categoryService
+@inject ImageUploadService imageUpload
+@inject LocationService locationService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Add Product</h5>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="HideModal"></button>
+        </div>
+        <div class="modal-body">
+            <RadzenTemplateForm Data="@product" TItem="Listing" Submit="@SaveProduct" InvalidSubmit=@OnInvalidSubmit>
+                <div class="rz-p-0 rz-p-md-12">
+                    <RadzenRow Gap="1rem">
+                        <RadzenColumn Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Product Name:" Variant="Variant.Filled">
+                                    <ChildContent>
+                                        <RadzenTextBox Name="title" @bind-Value="product.Title" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="title" Text="Title name is required." />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Product Description:" Variant="Variant.Filled">
+                                    <ChildContent>
+                                        <RadzenTextBox @bind-Value="product.Description" Name="Description" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="Description" Text="Description is required." />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Product Price:" Variant="Variant.Filled">
+                                    <ChildContent>
+                                        <RadzenNumeric @bind-Value="product.Price" Name="Price" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="Price" Text="Price is required." />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Category:" Variant="Variant.Filled">
+                                    <ChildContent>
+                                        <RadzenDropDown @bind-Value="product.CategoryID" Name="Category" Data="@categoryOptions" TextProperty="CategoryName" ValueProperty="CategoryID" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="Category" Text="Category is required." />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Location:" Variant="Variant.Filled">
+                                    <ChildContent>
+                                        <RadzenDropDown @bind-Value="product.LocationID" Name="Location" Data="@LocationOptions" TextProperty="LocationName" ValueProperty="LocationID" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="Location" Text="Location is required." />
+                                    </Helper>
+                                </RadzenFormField>
+
+                                <RadzenRadioButtonList @bind-Value=@radiobtnValue Name="radiobtnValue" TValue="int">
+                                    <Items>
+                                        <RadzenRadioButtonListItem Text="Used" Value="1" />
+                                        <RadzenRadioButtonListItem Text="New" Value="2" />
+                                    </Items>
+                                </RadzenRadioButtonList>
+
+
+                                <InputFile OnChange="HandleFileUpload" />
+
+                                <RadzenFormField Text="Status:" Variant="Variant.Filled">
+                                    <ChildContent>
+                                        <RadzenDropDown @bind-Value="product.StatusId" Name="Status" Data="@statusOptions" TextProperty="Name" ValueProperty="Id" Style="width: 100%;" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="Status" Text="Status is required." />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Primary" Type="Submit" />
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                </div>
+            </RadzenTemplateForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    Listing product = new();
+    private List<Status> statusOptions = new List<Status>();
+    private List<Category> categoryOptions = new List<Category>();
+    private List<Location> LocationOptions = new List<Location>();
+    public string? imagePath { get; set; }
+    public List<Listing> productList { get; set; }
+    public int radiobtnValue { get; set; } = 1;
+    private int progress { get; set; }
+    private string info;
+    bool showModal = false;
+    public int? userId { get; set; }
+    public string? userRole { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        statusOptions = await statusService.GetStatus();
+        categoryOptions = await categoryService.GetCategory();
+        LocationOptions = await locationService.GetLocation();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Int32.Parse(user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value);
+            userRole = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        }
+
+    }
+    void OnProgress(UploadProgressArgs args, string name)
+    {
+        this.info = $"% '{name}' / {args.Loaded} of {args.Total} bytes.";
+        this.progress = args.Progress;
+    }
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        using (var stream = file.OpenReadStream())
+        {
+            var fileName = file.Name;
+            var filePath = await imageUpload.UploadImage(stream, fileName);
+            imagePath = filePath;
+          
+        }
+    }
+    void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+    {
+
+    }
+
+    async Task SaveProduct()
+    {
+        product.Condition = radiobtnValue == 1 ? "Used" : "New";
+        product.UserID = userId;
+        product.Condition = product.Condition;
+        product.PostedDate = DateTime.Now;
+        var result = await productService.AddProduct(product, imagePath);
+        if (userRole == "Admin")
+        {
+            productList = await productService.GetProduct();
+
+        }
+        else if (userRole == "Buyer")
+        {
+            productList = await productService.GetProduct();
+            productList = productList.Where(p => p.UserID == userId).ToList();
+        }
+        await InvokeAsync(StateHasChanged);
+        showModal = false;
+        radiobtnValue = 1;
+
+    }
+    async Task showModel()
+    {
+
+
+        showModal = true;
+    }
+    void HideModal()
+    {
+        showModal = false;
+        product = new Listing();
+
+    }
+
+
+
+}

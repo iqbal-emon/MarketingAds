@@ -1,0 +1,115 @@
+﻿@layout DashboardLayout
+@page "/user/product"
+@using MarketingAds.Models;
+@using MarketingAds.Components.Product;
+@using MarketingAdsLibrary.Services;
+@using System.Security.Claims
+@inject ProductService productService
+@inject DialogService DialogService
+@inject StatusService statusService
+@inject CategoryService categoryService
+@inject ImageUploadService imageUpload
+@inject LocationService locationService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@if (load == true)
+{
+
+
+    <div class=" mt-5 col-">
+
+
+            <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="12" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                            Data="@productList"  LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" >
+                        
+                        
+                        <Columns>
+                <RadzenDataGridColumn Property="ListingID" Title="ListingID" Width="80px" TextAlign="TextAlign.Center" />
+                
+                <RadzenDataGridColumn Property="Title" Title="Title" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Description" Title="Description" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Price" Title="Price" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Category.CategoryName" Title="Category Name" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Location.LocationName" Title="Location Name" Width="80px" />
+                <RadzenDataGridColumn Property="Condition" Title="Condition" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="Listing" Property="Images" Title="Images" Width="80px">
+                    <Template Context="listing">
+                        @foreach (var image in listing.Images)
+                        {
+                            <img src="https://localhost:7235\@image.ImageURL" alt="Listing Image" style="max-width: 100%; max-height: 100%; margin-bottom: 5px;" />
+                            
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+
+
+
+                @* <RadzenDataGridColumn Title="Action" Width="200px" Filterable="false">
+                    <Template Context="product">
+                        @if (product.StatusId == 3)
+                        {
+                            <RadzenButton Disabled="true" Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args =>DeleteProduct(product.ListingID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                        }
+                        else
+                        {
+                            <RadzenButton Text="Delete" Icon="delete" Style="margin-right: 10px;" Click="@(args => DeleteProduct(product.ListingID))" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" />
+                        }
+                        <RadzenButton Text="Edit" Icon="edit" Click="@(args => UpdateProduct(product.ListingID))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
+
+                    </Template>
+                </RadzenDataGridColumn> *@
+
+            </Columns>
+        </RadzenDataGrid>
+        </div>
+
+
+    
+  
+}
+else
+{
+    <h1>Loading..</h1>
+}
+
+@code {
+    public List<Listing> productList;
+    bool showModal = false;
+    bool DeleteModel = false;
+    bool EditModal = false;
+    private int roleToDelete;
+    private List<Status> statusOptions = new List<Status>();
+    private List<Category> categoryOptions = new List<Category>();
+    private List<Location> LocationOptions = new List<Location>();
+    private string imagePath;
+    public int? userId { get; set; }
+    public string? userRole { get; set; }
+
+    public int radiobtnValue { get; set; } = 1;
+    public bool load = false;
+    public IFormFile uploadImage;
+ 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Int32.Parse(user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value);
+            userRole = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+        }
+        if (userRole == "Admin")
+        {
+            productList = await productService.GetProduct();
+
+        }
+        else if (userRole == "Buyer")
+        {
+            productList = await productService.GetProduct();
+            productList = productList.Where(p => p.UserID == userId).ToList();
+        }
+        load = true;
+
+    }
+}

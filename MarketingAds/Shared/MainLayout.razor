@@ -1,12 +1,16 @@
 ﻿@inherits LayoutComponentBase
 @using MarketingAds.Auth;
+@using MarketingAds.ClientSide.Component;
 @inject AuthStateProvider AuthStateProvider
 @using System.Security.Claims
 @inject NavigationManager NavigationManager
 <PageTitle>MarketingAds</PageTitle>
 
+
+    <HeaderComponent/>
+
 <div class="page">
-    <AuthorizeView>
+    <AuthorizeView Roles="Admin">
         <Authorized>
             <div class="sidebar">
                 <NavMenu />
@@ -27,6 +31,7 @@
  
 
 </div>
+<FooterComponent/>
 <RadzenDialog />
 @code{
 

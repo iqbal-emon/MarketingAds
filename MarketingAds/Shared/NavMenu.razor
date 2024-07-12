@@ -4,6 +4,10 @@
 @using System.Security.Claims
 @inject NavigationManager NavigationManager
 @inject IJSRuntime js
+@using MarketingAds.ClientSide.Component;
+
+    <AuthorizeView Roles="Admin">
+        <Authorized>
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">MarketingAds</a>
@@ -12,10 +16,7 @@
         </button>
     </div>
 </div>
-
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <AuthorizeView Roles="Admin">
-        <Authorized>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="Status" Match="NavLinkMatch.Prefix">
                     <span class="oi oi-circle-check" aria-hidden="true"></span> Status
@@ -47,38 +48,18 @@
                 </NavLink>
             </div>
             
+</div>
         </Authorized>
         
 
     </AuthorizeView>
 
-    
-
-
-          <AuthorizeView Roles="Buyer">
-            <Authorized>
-    <nav class="flex-column">
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Product" Match="NavLinkMatch.Prefix">
-                        <span class="oi oi-box" aria-hidden="true"></span> Product
-                    </NavLink>
-                </div>
-       
-    </nav>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link">
-                    <button class="btn btn-danger" @onclick="Logout">Log out</button>
-                </NavLink>
-            </div>
-            </Authorized>
-        </AuthorizeView>
+   
 
 
 
 
 
-</div>
 
 @code {
     private bool collapseNavMenu = true;

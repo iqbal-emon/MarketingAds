@@ -1,5 +1,6 @@
 ﻿@page "/Product"
 @attribute [Authorize(Roles = "Admin, Buyer")]
+@using MarketingAds.ClientSide.Component;
 @using MarketingAds.Models;
 @using MarketingAds.Components.Product;
 @using MarketingAdsLibrary.Services;
@@ -216,6 +217,7 @@ else
         product.Condition=radiobtnValue==1?"Used":"New";
         product.UserID = userId;
         product.Condition = product.Condition;
+        product.PostedDate = DateTime.Now;
         var result = await productService.AddProduct(product, imagePath);
         if (userRole == "Admin")
         {
