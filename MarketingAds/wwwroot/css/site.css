@@ -66,31 +66,26 @@ a, .btn-link {
 
 
 /* card design*/
-#custom-card {
-    border-radius: 10px;
-    overflow: hidden;
-    border-radius: 10px;
-}
 
 
 
 #custom-card-body {
-    background-color: #dc3545;
-    color: white;
+    background-color: rgb(0,140,193);
+    color: #cccccc;
 }
 
-    #custom-card-body h5 {
-        color: white;
+    #custom-card-body h6 {
+        color: #cccccc;
     }
 
 #price {
-    color: #f8d7da;
+    color: #cccccc;
     font-size: 1.5rem;
     font-weight: bold;
 }
 
 #location, #category, #time {
-    color: #f1b0b7;
+    color: #cccccc;
 }
 
     #location i, #category i {
@@ -108,7 +103,7 @@ a, .btn-link {
     font-size: 24px;
 }
 
-#navbar-nav .nav-link {
+#navbar-nav #nav-link {
     color: white;
 }
 
