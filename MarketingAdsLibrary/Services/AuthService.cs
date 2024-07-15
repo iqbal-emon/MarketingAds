@@ -27,6 +27,32 @@ namespace MarketingAdsLibrary.Services
             _context.SaveChanges();
             return user;
         }
+        public async Task<User> UpdateAccount(User? user)
+        {
+            var existingUser = await _context.Users.FindAsync(user?.UserID);
+            if (existingUser != null)
+            {
+                existingUser.Address = user?.Address;
+                existingUser.Email = user?.Email;
+                existingUser.Phone = user?.Phone;
+                existingUser.Username= user?.Username;
+                existingUser.PasswordHash = HashPassword(user?.PasswordHash);
+                _context.Users.Update(existingUser);
+                await _context.SaveChangesAsync();
+                return user;
+            }
+            return null;
+        }
+
+
+
+
+
+
+
+
+
+
 
         public async Task<User> LogIn(User newUser)
         {

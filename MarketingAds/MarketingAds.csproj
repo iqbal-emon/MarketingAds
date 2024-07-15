@@ -7,10 +7,45 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\bootstrap\**" />
+    <Content Remove="wwwroot\bootstrap\**" />
+    <EmbeddedResource Remove="wwwroot\bootstrap\**" />
+    <None Remove="wwwroot\bootstrap\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.bundle.js" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.bundle.js.map" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.bundle.min.js" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.bundle.min.js.map" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.esm.js" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.esm.js.map" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.esm.min.js" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.esm.min.js.map" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.js" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.js.map" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.min.js" />
+    <Content Remove="C:\Users\USER\.nuget\packages\bootstrap\5.3.3\contentFiles\any\any\wwwroot\js\bootstrap.min.js.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.bundle.js" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.bundle.js.map" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.bundle.min.js" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.bundle.min.js.map" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.esm.js" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.esm.js.map" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.esm.min.js" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.esm.min.js.map" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.js" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.js.map" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.min.js" />
+    <None Include="wwwroot\css\bootstrap\js\bootstrap.min.js.map" />
     <None Include="wwwroot\css\open-iconic\Image\Login.jpg" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="bootstrap" Version="5.3.3" />
     <PackageReference Include="Google.Ads.Common" Version="9.5.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.28" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.28" />

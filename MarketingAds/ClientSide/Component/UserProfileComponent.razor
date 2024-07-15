@@ -1,8 +1,117 @@
 ﻿@layout DashboardLayout
 @page "/user/profile"
+@using MarketingAds.Models;
+@using MarketingAdsLibrary.Services;
+@using MarketingAds.Components.Category;
+@using MarketingAds.Auth;
+@using System.Security.Claims
+@inject DialogService DialogService
+@inject UserService userService;
+@inject AuthService authService;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime js;
+@inject NavigationManager navigationManager;
+@inject AuthStateProvider AuthStateProvider 
 
-<h3>UserProfileComponent</h3>
+
+
+<div id="container" class="container mt-3 mb-5">
+    <div id="row" class="row justify-content-center">
+        <div id="col-md-6 " class="col-md-6">
+            @if(userDetails!=null){
+            <div id="form-section">
+                <h4>Change details</h4>
+                <p id="email-link">Email:@userDetails.Email</p>
+                <div id="form-group-name" class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" class="form-control" @bind-value=@userDetails.Username>
+                </div>
+                <div id="form-group-name" class="form-group">
+                    <label for="name">Phone</label>
+                    <input type="text" id="name" class="form-control" @bind-value=@userDetails.Phone>
+                </div>
+                <div id="form-group-name" class="form-group">
+                    <label for="name">Address</label>
+                    <input type="text" id="name" class="form-control" @bind-value=@userDetails.Address>
+                </div>
+                <button id="btn-update" class="btn btn-primary btn-custom mt-2" @onclick=UpdateUser>Update details</button>
+            </div>
+            <div id="form-section-password">
+                <h4>Change password</h4>
+                <div id="form-group-new-password" class="form-group">
+                    <label for="newPassword">New password</label>
+                    <input type="password" id="newPassword" @bind-value=@NewPassword class="form-control">
+                </div>
+                <div id="form-group-confirm-password" class="form-group">
+                    <label for="confirmPassword">Confirm new password</label>
+                    <input type="password" id="confirmPassword" @bind-value=@ConfirmPassword class="form-control">
+                </div>
+                <div id="password-error" class="error mt-2">@errorMessage</div>
+                <button id="btn-change-password" class="btn btn-secondary btn-custom" @onclick="validatePasswords">Change password</button>
+                    <button id="btn-delete-account" class="btn btn-danger btn-custom" @onclick="Logout">Log Out</button>
+            </div>
+            <!-- Delete Account and Log Out Buttons -->
+            }
+        </div>
+        </div>
+    </div>
+
+
 
 @code {
+    public User? userDetails=new();
+    public bool load = false;
+    bool DeleteModel = false;
+    string? NewPassword { get; set; }
+    string? ConfirmPassword { get; set; }
+    string? errorMessage { get; set; }
+
+    int idStatus;
+    private int roleToDelete;
+    private int userId{ get; set; }
+    IList<User>? selectedStatus;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Int32.Parse(user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value);
+
+        }
+        userDetails = await userService.GetUserDetails(userId);
+        load = true;
+
+    }
+    private void UpdateUser()
+    {
+        var UpdatedUser= authService.UpdateAccount(userDetails);
+        errorMessage = "Details Updated";
+
+
+
+    }
+    private void validatePasswords()
+    {
+        if (NewPassword !=ConfirmPassword)
+        {
+            errorMessage = "Passwords do not match";
+        }
+        else
+        {
+            userDetails.PasswordHash = ConfirmPassword;
+            var updateUser = authService.UpdateAccount(userDetails);
+            errorMessage = "Passwords Changed";
+
+        }
+    }
+    private async Task Logout()
+    {
+
+        await AuthStateProvider.UpdateAuthenticationState(null);
+        await js.InvokeVoidAsync("localStorage.clear");
+        navigationManager.NavigateTo("/login", true);
+    }
 
 }

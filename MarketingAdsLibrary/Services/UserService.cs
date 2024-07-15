@@ -21,6 +21,10 @@ namespace MarketingAdsLibrary.Services
         {
             return await _context.Users.Where(u=>u.UserRole!="Admin").ToListAsync();
         }
+        public async Task<User> GetUserDetails(int userId)
+        {
+            return await _context.Users?.FirstOrDefaultAsync(u => u.UserID == userId);
+        }
 
         public async Task<bool> StatusChanged(int roleId,int statusId)
         {

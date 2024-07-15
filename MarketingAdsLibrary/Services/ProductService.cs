@@ -27,6 +27,17 @@ namespace MarketingAdsLibrary.Services
             return await _context.Listings.Include(l => l.Images).Include(l => l.Category)
         .Include(l => l.Location).ToListAsync();
         }
+        public async Task<List<Listing>> getProductRecent()
+        {
+            return await _context.Listings
+                .Include(l => l.Images)
+                .Include(l => l.Category)
+                .Include(l => l.Location)
+                .OrderByDescending(l => l.PostedDate) 
+                .Take(12) 
+                .ToListAsync(); 
+        }
+
 
 
         public async Task<Listing> GetProductDetails(int ListingId)
@@ -39,7 +50,7 @@ namespace MarketingAdsLibrary.Services
                 .FirstOrDefaultAsync(l => l.ListingID == ListingId);
         }
 
-
+        
 
         public async Task<Listing?> AddProduct(Listing listing, string imagePath)
         {
@@ -127,7 +138,7 @@ namespace MarketingAdsLibrary.Services
             if (product != null)
             {
                 product.StatusId = 3;
-                _context.Listings.Update(product);
+                 _context.Listings.Update(product);
                 await _context.SaveChangesAsync();
 
                 return true;

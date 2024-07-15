@@ -43,7 +43,7 @@
 
 
 
-                @* <RadzenDataGridColumn Title="Action" Width="200px" Filterable="false">
+                <RadzenDataGridColumn Title="Action" Width="200px" Filterable="false">
                     <Template Context="product">
                         @if (product.StatusId == 3)
                         {
@@ -56,12 +56,17 @@
                         <RadzenButton Text="Edit" Icon="edit" Click="@(args => UpdateProduct(product.ListingID))" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
 
                     </Template>
-                </RadzenDataGridColumn> *@
+                </RadzenDataGridColumn>
 
             </Columns>
         </RadzenDataGrid>
         </div>
-
+    @if (UpdateProduct != null)
+    {
+        <div class="modal px-5" tabindex="-1" style="@EditModalStyle">
+            <ProductUpdateComponent LocationOptions="LocationOptions" ImagePathChanged="HandleImagePathChanged" updateProduct="productUpdate" UpdateProductBtn="UpdateProductBtn" categoryOptions="categoryOptions" statusOptions="statusOptions" hideUpdate="hideUpdate" />
+        </div>
+    }
 
     
   
@@ -87,7 +92,9 @@ else
     public int radiobtnValue { get; set; } = 1;
     public bool load = false;
     public IFormFile uploadImage;
- 
+    public Listing? productUpdate = new Listing();
+
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -107,9 +114,117 @@ else
         else if (userRole == "Buyer")
         {
             productList = await productService.GetProduct();
-            productList = productList.Where(p => p.UserID == userId).ToList();
+            productList = productList.Where(p => p.UserID == userId&&p.StatusId!=3).ToList();
         }
         load = true;
 
     }
+    public async Task ShowConfirmationDialog()
+    {
+        bool? result = await DialogService.Confirm("Are you sure?", "MyTitle", new ConfirmOptions()
+            {
+                OkButtonText = "Delete",
+                CancelButtonText = "Cancel"
+            });
+
+        if (result == true)
+        {
+            await DeleteConfirmed();
+        }
+        else
+        {
+            hideDelete();
+        }
+    }
+    protected async Task DeleteProduct(int roleId)
+    {
+        roleToDelete = roleId;
+        DeleteModel = true;
+        ShowConfirmationDialog();
+    }
+    void hideDelete()
+    {
+        DeleteModel = false;
+    }
+    private async Task DeleteConfirmed()
+    {
+        await productService.DeleteAsync(roleToDelete);
+        productList = await productService.GetProduct();
+        productList = productList.Where(p => p.UserID == userId && p.StatusId != 3).ToList();
+        StateHasChanged();
+        // Reset variables
+        roleToDelete = 0;
+        DeleteModel = false;
+    }
+
+
+    private async Task UpdateProductBtn()
+    {
+        var ImageDeletId = productUpdate.ListingID;
+        Image image = new();
+        image.ListingID = ImageDeletId;
+        image.ImageURL = imagePath;
+        await imageUpload.UpdateImage(image);
+        await productService.UpdateProduct(productUpdate);
+        if (userRole == "Admin")
+        {
+            productList = await productService.GetProduct();
+
+        }
+        else if (userRole == "Buyer")
+        {
+            productList = await productService.GetProduct();
+            productList = productList.Where(p => p.UserID == userId).ToList();
+        }
+        await InvokeAsync(StateHasChanged);
+        EditModal = false;
+
+
+    }
+
+    void hideUpdate()
+    {
+        EditModal = false;
+
+    }
+    async Task UpdateProduct(int productId)
+    {
+        // Call the service method with the parsed memberId
+        var roleMember = await productService.GetProductById(productId);
+        statusOptions = await statusService.GetStatus();
+        categoryOptions = await categoryService.GetCategory();
+        LocationOptions = await locationService.GetLocation();
+
+        EditModal = true;
+        if (roleMember != null)
+        {
+            productUpdate = new Listing()
+                {
+                    ListingID = roleMember.ListingID,
+                    Title = roleMember.Title,
+                    Description = roleMember.Description,
+                    CategoryID = roleMember.CategoryID,
+                    UserID = roleMember.UserID,
+                    Price = roleMember.Price,
+                    LocationID = roleMember.LocationID,
+                    Condition = roleMember.Condition,
+                    StatusId = roleMember.StatusId
+
+                };
+
+        }
+        else
+        {
+
+        }
+    }
+    private async Task HandleImagePathChanged(string newPath)
+    {
+        imagePath = newPath;
+        StateHasChanged(); // Ensure UI updates with new imagePath
+    }
+    string DeleteModalStyle => DeleteModel ? "display: block;" : "display: none;";
+    string EditModalStyle => EditModal ? "display: block;" : "display: none;";
+
+
 }
