@@ -27,7 +27,7 @@ namespace MarketingAdsLibrary.Services
             var query = from c in _context.Categories
                         join l in _context.Listings on c.CategoryID equals l.CategoryID into listingGroup
                         from lg in listingGroup.DefaultIfEmpty()
-                        join i in _context.Images on lg.ListingID equals i.Listing.ListingID into imageGroup
+                        join i in _context.Images on lg.CategoryID equals i.CategoryID into imageGroup
                         from ig in imageGroup.DefaultIfEmpty()
                         group new { lg, ig } by new { c.CategoryID, c.CategoryName } into g
                         select new CategoryListingSummary
@@ -42,6 +42,7 @@ namespace MarketingAdsLibrary.Services
 
             return result;
         }
+
 
 
 

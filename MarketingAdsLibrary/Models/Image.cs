@@ -12,7 +12,7 @@ namespace MarketingAds.Models
         public Listing? Listing { get; set; }
 
 
-        public int? CategoryID;
+        public int? CategoryID { get; set; }
 
         public int StatusId { get; set; } = 1;
         [ForeignKey("StatusId")]

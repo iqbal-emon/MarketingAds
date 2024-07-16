@@ -83,10 +83,10 @@
                             </div>
 
                             <div class="card-body " id="custom-card-body">
-                                <h6 id="price"> @product.Price</h6>
-                                <h6 class="card-title">  @product.Title</h6>
+                                    <h6 class="card-title" id="card-title">  @product.Title</h6>
+                                    <h6 id="price">৳@product.Price</h6>
                                 <h6 id="location"> <span class="oi oi-map-marker" aria-hidden="true"></span> @product?.Location?.LocationName</h6>
-                                <h6 id="category"> <span class="oi oi-tags" aria-hidden="true"></span>@product?.Category?.CategoryName</h6>
+                                <h6 id="category"> <span class="oi oi-tags" aria-hidden="true"></span> @product?.Category?.CategoryName</h6>
                                 <h6 id="time">
                                     @{
                                         if (product?.PostedDate != null)

@@ -20,7 +20,7 @@
                                         <RadzenRequiredValidator Component="CategoryName" Text="Category name is required." />
                                     </Helper>
                                 </RadzenFormField>
-                                <InputFile OnChange="HandleFileUpload" />
+                                <InputFile OnChange="HandleFileUpload1" />
 
                                 <RadzenFormField Text="Status:" Variant="Variant.Filled">
                                     <ChildContent>
@@ -56,7 +56,7 @@
     public string? imagePath { get; set; }
     [Parameter]
     public EventCallback<string> ImagePathChanged { get; set; }
-    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    private async Task HandleFileUpload1(InputFileChangeEventArgs e)
     {
         var file = e.File;
 
