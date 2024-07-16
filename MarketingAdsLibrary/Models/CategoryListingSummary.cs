@@ -8,9 +8,10 @@ namespace MarketingAds.Models
 {
     public class CategoryListingSummary
     {
-        public int CategoryID { get; set; }
-        public string CategoryName { get; set; }
-        public int ListingCount { get; set; }
+        public int? CategoryID { get; set; }
+        public string? CategoryName { get; set; }
+        public int? ListingCount { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
 

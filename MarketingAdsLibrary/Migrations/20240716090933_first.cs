@@ -105,7 +105,6 @@ namespace MarketingAdsLibrary.Migrations
                     PostedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     StatusId = table.Column<int>(type: "int", nullable: true),
                     CategoryID1 = table.Column<int>(type: "int", nullable: true),
-                    LocationID1 = table.Column<int>(type: "int", nullable: true),
                     UserID1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -128,11 +127,6 @@ namespace MarketingAdsLibrary.Migrations
                         principalTable: "Locations",
                         principalColumn: "LocationID",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Listings_Locations_LocationID1",
-                        column: x => x.LocationID1,
-                        principalTable: "Locations",
-                        principalColumn: "LocationID");
                     table.ForeignKey(
                         name: "FK_Listings_Status_StatusId",
                         column: x => x.StatusId,
@@ -271,8 +265,7 @@ namespace MarketingAdsLibrary.Migrations
                         name: "FK_Transactions_Listings_ListingID",
                         column: x => x.ListingID,
                         principalTable: "Listings",
-                        principalColumn: "ListingID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "ListingID");
                     table.ForeignKey(
                         name: "FK_Transactions_Status_StatusId",
                         column: x => x.StatusId,
@@ -321,11 +314,6 @@ namespace MarketingAdsLibrary.Migrations
                 name: "IX_Listings_LocationID",
                 table: "Listings",
                 column: "LocationID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Listings_LocationID1",
-                table: "Listings",
-                column: "LocationID1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Listings_StatusId",
@@ -390,9 +378,7 @@ namespace MarketingAdsLibrary.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_ListingID",
                 table: "Transactions",
-                column: "ListingID",
-                unique: true,
-                filter: "[ListingID] IS NOT NULL");
+                column: "ListingID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_SellerID",

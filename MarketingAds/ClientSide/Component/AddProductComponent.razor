@@ -12,15 +12,12 @@
 @inject LocationService locationService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+<div class="m-5">
 
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Add Product</h5>
-            <button type="button" class="btn-close" aria-label="Close" @onclick="HideModal"></button>
-        </div>
-        <div class="modal-body">
             <RadzenTemplateForm Data="@product" TItem="Listing" Submit="@SaveProduct" InvalidSubmit=@OnInvalidSubmit>
+    <div class="d-flex justify-content-center align-items-center">
+        <h2> Add Product</h2>
+    </div>
                 <div class="rz-p-0 rz-p-md-12">
                     <RadzenRow Gap="1rem">
                         <RadzenColumn Size="12">
@@ -91,8 +88,6 @@
 
                 </div>
             </RadzenTemplateForm>
-        </div>
-    </div>
 </div>
 
 @code {

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarketingAdsLibrary.Migrations
 {
     [DbContext(typeof(Marketing))]
-    [Migration("20240711135435_addCategoryListing")]
-    partial class addCategoryListing
+    [Migration("20240716090933_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

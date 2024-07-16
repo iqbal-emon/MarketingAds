@@ -2,6 +2,7 @@
 @using MarketingAds.Models;
 @using MarketingAdsLibrary.Services;
 @inject CategoryService categoryService;
+@inject ProductService productService;
 <div class="container mt-5 py-5 mb-5" >
     <div class="row align-items-start">
         @if (listings != null && listings.Any())
@@ -86,9 +87,32 @@
     List<Listing>? listings;
     public int ConvertedCategoryID{ get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        ConvertedCategoryID = Int32.Parse(CategoryID);
-        listings = await categoryService.GetListingBasedCategory(ConvertedCategoryID);
+        if (CategoryID=="allproduct")
+        {
+            listings = await productService.GetProduct();
+
+        }
+        if (CategoryID.Contains("search="))
+        {
+            int startIndex = CategoryID.IndexOf("search=") + "search=".Length;
+            CategoryID = CategoryID.Substring(startIndex).Split(' ')[0];
+            listings = await productService.GetSearchProduct(CategoryID.ToLower());
+
+        }
+        else if (CategoryID.Contains("category="))
+        {
+            int startIndex = CategoryID.IndexOf("category=") + "category=".Length;
+            CategoryID = CategoryID.Substring(startIndex).Split(' ')[0];
+            ConvertedCategoryID = Int32.Parse(CategoryID);
+            listings = await categoryService.GetListingBasedCategory(ConvertedCategoryID);
+
+        }
+        StateHasChanged();
+
+
+       
     }
+
 }

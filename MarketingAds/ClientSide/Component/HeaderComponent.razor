@@ -12,21 +12,60 @@
 @inject LocationService locationService
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject NavigationManager navigationManager;
-<nav class="navbar navbar-expand-lg" style="background-color:rgb(0,174,239)" >
-    <div class="container-fluid">
+<nav class="navbar  navbar-expand-lg" style="background-color:rgb(0,174,239)">
+    <div class="container-fluid ">
         <a class="navbar-brand" href="#" style="color:white">Marketplace</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" style="z-index:1000;" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" style="color:white" aria-current="page" href="#">Home</a>
+                    <a class="nav-link active" style="color:white" aria-current="page" href="/listing/allproduct">All Product</a>
+                    
                 </li>
-
+              
             </ul>
+           @*  <nav class="navbar navbar-dark ">
+                <div class="container-fluid">
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-primary  text-white" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav> *@
 
-            <a class="nav-link" style="color:white" href="./login">Login</a>
+
+            <div class="position-relative w-50">
+                <div class="d-flex">
+                <input  class="form-control w-50" placeholder="Search..." @oninput="OnInput">
+                    <a class="btn btn-primary " href="/listing/search=@searchText" @onclick="@( () => ClearSearchList())"  style="margin-left:2px;">Search</a>
+
+
+                </div>
+                <div class="position-absolute w-50 suggestion-list dropdown " style="@(SearchList?.Count > 0 ? "display: block;" : "display: none;") z-index: 1000;">
+                    <ul class="dropdown-menu w-100 show" style="height:200px;overflow-y:scroll;">
+                        @if (SearchList != null)
+                        {
+                            @foreach (var search in SearchList)
+                            {
+                                <li>
+                                    <a class="dropdown-item" href="./product/details/@search.ListingID" @onclick="@( () => ClearSearchList() )">
+                                        <span class="oi oi-magnifying-glass" aria-hidden="true"></span>   @search.Title
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+           
+
+
+
+
+          
+            <button class="btn btn-primary mx-2" style="color:white" type="button" @onclick="HandleLoginClick">@loginText</button>
 
             <button class="btn btn-primary" style="color:white" type="button" @onclick="HandlePostListingClick">Post Listing</button>
  
@@ -64,9 +103,12 @@
     private List<Status> statusOptions = new List<Status>();
     private List<Category> categoryOptions = new List<Category>();
     private List<Location> LocationOptions = new List<Location>();
+    private List<Listing> SearchList = new List<Listing>();
     private string imagePath;
     private string loginText { get; set; } = "Login";
     private string loginLink { get; set; } = "login";
+    private string searchText;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,11 +120,34 @@
             userId = Int32.Parse(user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value);
             userRole = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             loginText = "Account";
+            
 
 
         }
 
     }
+
+    private async Task OnInput(ChangeEventArgs e)
+    {
+         searchText = e.Value?.ToString().Trim().ToLower();
+        if (!string.IsNullOrEmpty(searchText))
+        {
+            SearchList = await productService.GetSearchProduct(searchText);
+        }
+        else
+        {
+            SearchList = null;
+        }
+    }
+
+    private void ClearSearchList()
+    {
+        SearchList = null;
+    }
+
+
+
+
     private void HandleLoginClick()
     {
         if (userRole == "Admin")

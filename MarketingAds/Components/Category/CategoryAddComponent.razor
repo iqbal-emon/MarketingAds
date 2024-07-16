@@ -1,5 +1,5 @@
 ﻿@using MarketingAds.Models;
-
+@inject ImageUploadService imageUpload
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
@@ -20,6 +20,7 @@
                                         <RadzenRequiredValidator Component="CategoryName" Text="Category name is required." />
                                     </Helper>
                                 </RadzenFormField>
+                                <InputFile OnChange="HandleFileUpload" />
 
                                 <RadzenFormField Text="Status:" Variant="Variant.Filled">
                                     <ChildContent>
@@ -52,5 +53,24 @@
     public List<Category> allCategory { get; set; }
     [Parameter]
     public List<Status> statusOptions { get; set; }
+    public string? imagePath { get; set; }
+    [Parameter]
+    public EventCallback<string> ImagePathChanged { get; set; }
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
 
+        using (var stream = file.OpenReadStream())
+        {
+            var fileName = file.Name;
+            var filePath = await imageUpload.UploadImage(stream, fileName);
+            imagePath = filePath;
+
+            if (ImagePathChanged.HasDelegate)
+            {
+                await ImagePathChanged.InvokeAsync(imagePath);
+            }
+            // Optionally, handle the uploaded file path returned from the server
+        }
+    }
 }

@@ -10,6 +10,10 @@ namespace MarketingAds.Models
 
         [ForeignKey("ListingID")]
         public Listing? Listing { get; set; }
+
+
+        public int? CategoryID;
+
         public int StatusId { get; set; } = 1;
         [ForeignKey("StatusId")]
         public virtual Status? Status { get; set; }

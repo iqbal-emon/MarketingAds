@@ -37,7 +37,12 @@ namespace MarketingAdsLibrary.Services
                 .Take(12) 
                 .ToListAsync(); 
         }
+        public async Task<List<Listing>>GetSearchProduct(string searchText)
+        {
 
+           return await _context.Listings.Where(p=>p.Title.ToLower().Contains(searchText)).Include(p=>p.Images)
+                        .ToListAsync();
+        }
 
 
         public async Task<Listing> GetProductDetails(int ListingId)
