@@ -65,6 +65,8 @@ namespace MarketingAdsLibrary.Migrations
 
                     b.HasKey("ImageID");
 
+                    b.HasIndex("CategoryID");
+
                     b.HasIndex("ListingID");
 
                     b.HasIndex("StatusId");
@@ -344,6 +346,10 @@ namespace MarketingAdsLibrary.Migrations
 
             modelBuilder.Entity("MarketingAds.Models.Image", b =>
                 {
+                    b.HasOne("MarketingAds.Models.Category", null)
+                        .WithMany("Images")
+                        .HasForeignKey("CategoryID");
+
                     b.HasOne("MarketingAds.Models.Listing", "Listing")
                         .WithMany("Images")
                         .HasForeignKey("ListingID");
@@ -499,6 +505,8 @@ namespace MarketingAdsLibrary.Migrations
 
             modelBuilder.Entity("MarketingAds.Models.Category", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("Listings");
                 });
 

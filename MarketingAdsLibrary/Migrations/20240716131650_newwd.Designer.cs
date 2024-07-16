@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarketingAdsLibrary.Migrations
 {
     [DbContext(typeof(Marketing))]
-    [Migration("20240716114929_new")]
-    partial class @new
+    [Migration("20240716131650_newwd")]
+    partial class newwd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,6 +53,9 @@ namespace MarketingAdsLibrary.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageID"), 1L, 1);
 
+                    b.Property<int?>("CategoryID")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageURL")
                         .HasColumnType("nvarchar(max)");
 
@@ -63,6 +66,8 @@ namespace MarketingAdsLibrary.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ImageID");
+
+                    b.HasIndex("CategoryID");
 
                     b.HasIndex("ListingID");
 
@@ -343,6 +348,10 @@ namespace MarketingAdsLibrary.Migrations
 
             modelBuilder.Entity("MarketingAds.Models.Image", b =>
                 {
+                    b.HasOne("MarketingAds.Models.Category", null)
+                        .WithMany("Images")
+                        .HasForeignKey("CategoryID");
+
                     b.HasOne("MarketingAds.Models.Listing", "Listing")
                         .WithMany("Images")
                         .HasForeignKey("ListingID");
@@ -498,6 +507,8 @@ namespace MarketingAdsLibrary.Migrations
 
             modelBuilder.Entity("MarketingAds.Models.Category", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("Listings");
                 });
 

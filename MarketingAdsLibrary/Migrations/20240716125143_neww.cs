@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MarketingAdsLibrary.Migrations
 {
-    public partial class first : Migration
+    public partial class neww : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -153,6 +153,7 @@ namespace MarketingAdsLibrary.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ListingID = table.Column<int>(type: "int", nullable: true),
                     ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CategoryID = table.Column<int>(type: "int", nullable: true),
                     StatusId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

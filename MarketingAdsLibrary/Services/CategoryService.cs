@@ -20,8 +20,11 @@ namespace MarketingAdsLibrary.Services
         }
         public async Task<List<Category>> GetCategory()
         {
-            return await _context.Categories.Include(c=>c.Listings).ToListAsync();
+            return await _context.Categories.Include(c=>c.Listings).
+        Include(c => c.Images).ToListAsync();
         }
+
+
         public async Task<List<CategoryListingSummary>> GetListingBasedCategoryCount()
         {
             var query = from c in _context.Categories

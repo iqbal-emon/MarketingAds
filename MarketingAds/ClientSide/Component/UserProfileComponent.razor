@@ -1,4 +1,5 @@
 ﻿@layout DashboardLayout
+@attribute [Authorize(Roles = "Buyer")]
 @page "/user/profile"
 @using MarketingAds.Models;
 @using MarketingAdsLibrary.Services;

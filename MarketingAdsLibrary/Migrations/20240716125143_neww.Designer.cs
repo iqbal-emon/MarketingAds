@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarketingAdsLibrary.Migrations
 {
     [DbContext(typeof(Marketing))]
-    [Migration("20240716115042_newd")]
-    partial class newd
+    [Migration("20240716125143_neww")]
+    partial class neww
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -11,7 +11,7 @@ namespace MarketingAds.Models
         
        
         public ICollection<Listing>? Listings { get; set; }
-
+        public ICollection<Image>? Images { get; set; }
 
         public int StatusId { get; set; } = 1;
         [ForeignKey("StatusId")]
