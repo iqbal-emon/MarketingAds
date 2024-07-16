@@ -6,17 +6,21 @@
 @inject NavigationManager NavigationManager
 <PageTitle>MarketingAds</PageTitle>
 
-    <HeaderComponent/>
-
+@if (!NavigationManager.Uri.Contains("/admin/"))
+{
+    <HeaderComponent />
+}
 <div class="page">
     <AuthorizeView Roles="Admin">
         <Authorized>
+@if (NavigationManager.Uri.Contains("/admin/"))
+{
             <div class="sidebar">
                 <NavMenu />
 
             </div>
+}
         </Authorized>
-      
 
     </AuthorizeView>
     
@@ -30,7 +34,10 @@
  
 
 </div>
-<FooterComponent/>
+@if (!NavigationManager.Uri.Contains("/admin/"))
+{
+    <FooterComponent/>
+}
 <RadzenDialog />
 @code{
 
@@ -46,7 +53,7 @@
             if (userRole == "Admin")
                 if (NavigationManager.Uri == "https://localhost:7209/")
                 {
-                    NavigationManager.NavigateTo("Status"); // Navigate to Status page
+                    NavigationManager.NavigateTo("/admin/Status"); // Navigate to Status page
                 }
 
         }
