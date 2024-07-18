@@ -40,23 +40,39 @@
 <div class="text-center ">
     <h2 class="fw-bold">All Category</h2>
 </div>
-<div class="container mt-5 mb-5 px-5 ">
-    <div class="row align-items-start">
+<div class="container mt-5 mb-5 px-5 " >
+    <div class="row d-flex justify-content-center col-12 col-md-12">
         @if (categories != null && categories.Any())
         {
             @foreach (var category in categories)
             {
-                <div class="col-md-3">
+               @*  <div class="col-md-3">
                     <div class="card border rounded mb-4">
                         <img src="https://localhost:7235\@category.ImageUrl" class="card-img-top" alt="Category Image" style="height: 200px;">
 
                         <div class="card-body">
-                            <h5 class="card-title">@category.CategoryName</h5>
+                            <h5 class="card-title">src="https://localhost:7235\@category.ImageUrl"</h5>
                             <p class="card-text">@category?.ListingCount Listings</p>
-                            <a class="btn btn-primary" @onclick="@( () => navgiationManager.NavigateTo($"/listing/category={category?.CategoryID}") )">View Listings</a>
+                            <a class="btn btn-primary" @onclick="@( () => navgiationManager.NavigateTo(vv) )">View Listings</a>
                         </div>
                     </div>
-                </div>
+                </div> *@
+          
+                   <a href="/listing/category=@category?.CategoryID" class="category-card col-lg-2 col-md-4 mt-2" style="margin-left:10px;">
+                    <img src="https://localhost:7235\@category.ImageUrl" alt="Mobiles" class="category-icon">
+                        <div class="category-content">
+                            <div class="category-name" >@category.CategoryName</div>
+                        <div class="ad-count">@category?.ListingCount  ads</div>
+                        </div>
+                    </a>
+     
+
+
+
+
+
+
+
             }
         }
     </div>
