@@ -24,12 +24,12 @@ namespace MarketingAdsLibrary.Services
 
         public async Task<List<Listing>> GetProduct()
         {
-            return await _context.Listings.Include(l => l.Images).Include(l => l.Category)
+            return await _context.Listings.Where(l => l.StatusId == 1).Include(l => l.Images).Include(l => l.Category)
         .Include(l => l.Location).ToListAsync();
         }
         public async Task<List<Listing>> getProductRecent()
         {
-            return await _context.Listings
+            return await _context.Listings.Where(l=>l.StatusId==1)
                 .Include(l => l.Images)
                 .Include(l => l.Category)
                 .Include(l => l.Location)

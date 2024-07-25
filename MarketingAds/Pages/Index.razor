@@ -40,8 +40,8 @@
 <div class="text-center ">
     <h2 class="fw-bold">All Category</h2>
 </div>
-<div class="container mt-5 mb-5 px-5 " >
-    <div class="row d-flex justify-content-center col-12 col-md-12">
+<div class="container mt-5 mb-5 px-5 ">
+    <div class="row d-flex   col-12 col-md-12">
         @if (categories != null && categories.Any())
         {
             @foreach (var category in categories)
@@ -78,16 +78,16 @@
     </div>
 </div>
  <div style="background-color:rgb(245,246,247);">
-<div class="container mt-5 py-5 mb-5 " >
-<div class="text-center">
+<div class="container mt-5  justify-content-center" >
+<div class="text-center pt-5">
             <h2 class="fw-bold">Recent Listing</h2>
 </div>
-    <div class="row align-items-start ">
+        <div class="row p-5">
         @if (listings != null && listings.Any())
         {
             @foreach (var product in listings)
             {
-                <div class=" mt-4 h-50" style="width:300px">
+                <div class=" mt-4 h-50 col-lg-3 col-md-6 col-sm-12" style="">
                     <a style="text-decoration: none;" href="/product/details/@product.ListingID">
                             <div class="card border rounded" >
                             <div>

@@ -27,7 +27,7 @@ namespace MarketingAdsLibrary.Services
 
         public async Task<List<CategoryListingSummary>> GetListingBasedCategoryCount()
         {
-            var query = from c in _context.Categories
+            var query = from c in _context.Categories 
                         join l in _context.Listings on c.CategoryID equals l.CategoryID into listingGroup
                         from lg in listingGroup.DefaultIfEmpty()
                         join i in _context.Images on lg.CategoryID equals i.CategoryID into imageGroup
@@ -60,9 +60,9 @@ namespace MarketingAdsLibrary.Services
 
         public async Task<List<Listing>> GetListingBasedCategory(int CategoryId)
         {
-            return await _context.Listings.Where(l => l.CategoryID == CategoryId).Include(l=>l.Category).Include(l=>l.Location).Include(l=>l.Images).ToListAsync();
+            return await _context.Listings.Where(l => l.CategoryID == CategoryId && l.StatusId==1).Include(l=>l.Category).Include(l=>l.Location).Include(l=>l.Images).ToListAsync();
                 
-  }
+             }
 
 
 
